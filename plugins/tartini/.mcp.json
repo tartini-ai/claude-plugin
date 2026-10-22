@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "tartini": {
+      "type": "http",
+      "url": "https://mcp.tartini.ai/mcp",
+      "headers": {
+        "Authorization": "Bearer ${TARTINI_API_KEY}"
+      }
+    },
+    "bigquery": {
+      "type": "http",
+      "url": "https://bigquery.googleapis.com/mcp",
+      "headersHelper": "\"${CLAUDE_PLUGIN_ROOT}/scripts/gcloud-token\""
+    }
+  }
+}

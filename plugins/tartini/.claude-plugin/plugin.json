@@ -1,0 +1,19 @@
+{
+  "name": "tartini",
+  "displayName": "Tartini AI",
+  "version": "0.1.0",
+  "description": "Tartini AI in Claude Code: GA4 tracking definitions checked against your local change, Measurement Plans and metrics kept in your Tartini AI project, and your own BigQuery through Google's BigQuery MCP.",
+  "author": {
+    "name": "Tartini AI",
+    "email": "hello@tartini.ai",
+    "url": "https://tartini.ai"
+  },
+  "homepage": "https://tartini.ai/docs/claude-code",
+  "repository": "https://github.com/tartini-ai/claude-plugin",
+  "license": "Apache-2.0",
+  "keywords": ["analytics", "ga4", "google-analytics", "bigquery", "tracking", "metrics", "measurement-plan"],
+  "documentationUrl": "https://tartini.ai/docs/claude-code",
+  "supportUrl": "https://tartini.ai",
+  "privacyPolicyUrl": "https://tartini.ai/privacy",
+  "termsOfServiceUrl": "https://tartini.ai/terms"
+}

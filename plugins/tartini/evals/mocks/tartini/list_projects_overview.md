@@ -1,0 +1,1 @@
+{"ok":true,"tool":"list_projects_overview","data":{"projects":[{"id":"prj_petal","name":"Petal and Stem","github":"flower-shop-demo/storefront","googleAnalytics":"connected","bigquery":"connected"}]}}

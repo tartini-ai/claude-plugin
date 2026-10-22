@@ -1,0 +1,38 @@
+Tartini AI plugin for Claude Code
+Copyright 2026 Tartini AI LLC
+
+Licensed under the Apache License, Version 2.0 (see LICENSE).
+
+This plugin follows the shape of other open source work. No code is copied from it; where a
+structure, a format or a style is followed, it is named here.
+
+1. anthropics/knowledge-work-plugins, the "data" plugin
+   https://github.com/anthropics/knowledge-work-plugins
+   Apache License 2.0, published by Anthropic.
+   Followed: the marketplace and plugin layout (.claude-plugin/marketplace.json, plugins/<name>/,
+   .claude-plugin/plugin.json, .mcp.json with a remote "bigquery" server at
+   https://bigquery.googleapis.com/mcp, skills/<name>/SKILL.md). Changed: that plugin lists only the
+   BigQuery URL, which cannot sign in from Claude Code because Google's remote MCP servers support
+   neither Dynamic Client Registration nor Client ID Metadata Documents; this plugin adds a
+   headersHelper (scripts/gcloud-token) and documents an OAuth client of your own.
+
+2. anthropics/skills, the Apache 2.0 skills (skill-creator and mcp-builder)
+   https://github.com/anthropics/skills
+   Apache License 2.0, published by Anthropic.
+   Followed: the SKILL.md style, with name and description front matter, a description that says
+   what the skill does and when to use it, and short instructions in the imperative. Nothing is taken
+   from the docx, pdf, pptx or xlsx skills, which are not open source.
+
+3. PostHog wizard, the web-analytics-doctor program
+   https://github.com/PostHog/wizard (src/programs/web-analytics-doctor/index.ts)
+   MIT License, Copyright (c) 2025 PostHog.
+   Followed in commands/doctor.md: the shape of the check, which audits read only first, then lists
+   the findings and lets the person pick which fixes to make, and applies only those. No text is
+   copied. The skill text behind that program (PostHog/context-mill) carries no license and was not
+   used.
+
+4. Model Context Protocol Registry, server.json (repository root, not part of this plugin folder)
+   https://github.com/modelcontextprotocol/registry
+   Schema: https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json
+   Apache License 2.0 (code being relicensed from MIT) and CC-BY-4.0 (documentation).
+   Followed: the server.json format for a remote server with a secret header.

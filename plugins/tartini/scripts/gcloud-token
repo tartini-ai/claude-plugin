@@ -1,0 +1,18 @@
+#!/bin/sh
+# gcloud-token: the Authorization header for Google's BigQuery MCP, for Claude Code's headersHelper.
+#
+# Claude Code runs this each time it connects to the plugin's "bigquery" server, and again after a
+# 401 or 403, and reads one JSON object from stdout: {"Authorization": "Bearer <token>"}. The token
+# is the signed-in gcloud account's own (gcloud auth print-access-token), so queries run with that
+# person's Google Cloud permissions. Nothing is written to disk, nothing is cached and nothing is
+# sent anywhere by this script. A problem goes to stderr with what to run, and the exit is non-zero.
+
+command -v gcloud >/dev/null 2>&1 || {
+  echo "gcloud-token: the Google Cloud CLI (gcloud) is not installed or not on PATH. Install it, then run: gcloud auth login" >&2
+  exit 1
+}
+
+gcloud auth print-access-token --quiet | awk '
+  NF { printf "{\"Authorization\": \"Bearer %s\"}\n", $1; found = 1; exit }
+  END { if (!found) { print "gcloud-token: gcloud gave no access token. Run: gcloud auth login" > "/dev/stderr"; exit 1 } }
+'

@@ -1,0 +1,17 @@
+{
+  "name": "tartini-ai",
+  "description": "Tartini AI for Claude Code: GA4 tracking definitions, Measurement Plans and metrics kept by Tartini AI, and your own BigQuery through Google's BigQuery MCP.",
+  "owner": {
+    "name": "Tartini AI",
+    "email": "hello@tartini.ai",
+    "url": "https://tartini.ai"
+  },
+  "plugins": [
+    {
+      "name": "tartini",
+      "source": "./plugins/tartini",
+      "description": "Add and check GA4 tracking, write Measurement Plans and define metrics with Tartini AI, and query your own BigQuery with Google's BigQuery MCP.",
+      "category": "analytics"
+    }
+  ]
+}

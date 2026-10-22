@@ -1,0 +1,1 @@
+[{"account":"accounts/301234567","display_name":"Petal and Stem","property_summaries":[{"property":"properties/412345678","display_name":"Petal and Stem (GA4)","property_type":"PROPERTY_TYPE_ORDINARY"}]}]
