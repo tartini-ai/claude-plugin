@@ -1,6 +1,6 @@
 ---
 name: setup
-description: Connect a repository to Tartini AI and find out what its analytics project has connected, such as the Tartini AI API key (TARTINI_API_KEY), which Tartini AI project this git remote belongs to, GitHub, Google Analytics 4 and BigQuery access, and signing in to Google's BigQuery MCP. Use it when someone starts analytics work in a repository for the first time, asks what is connected or set up, wants GA4, Google Analytics or BigQuery set up for a site, or when a Tartini AI or BigQuery tool fails with 401, permission denied or not connected, even if they never mention Tartini.
+description: Connect a repository to Tartini AI and find out what its analytics project has connected, such as the sign-in to Tartini AI (or its API key, TARTINI_API_KEY, for scripts and CI), which Tartini AI project this git remote belongs to, GitHub, Google Analytics 4 and BigQuery access, and signing in to Google's BigQuery MCP. Use it when someone starts analytics work in a repository for the first time, asks what is connected or set up, wants GA4, Google Analytics or BigQuery set up for a site, or when a Tartini AI or BigQuery tool fails with 401, permission denied or not connected, even if they never mention Tartini.
 user-invocable: false
 ---
 
@@ -10,7 +10,7 @@ Tartini AI keeps this project's analytics: its tracking definitions, Measurement
 
 1. Find the repository: run `git remote get-url origin`.
 2. Call `get_started` with that remote. It says who is signed in, which Tartini AI project this repository is, what that project has connected, the rules every task follows, and which guides and skills there are. Follow its rules.
-   - A 401, or "This Tartini AI API key is not valid": there is no key in `TARTINI_API_KEY`, or it was revoked. Tell the person to generate one on tartini.ai (Settings, Claude Code), set it as `TARTINI_API_KEY` in their shell profile, and restart Claude Code. Never ask them to paste the key into the chat or a file. Stop here until it works.
+   - A 401, or "Sign in: in Claude Code, run /mcp and choose tartini": Claude Code is not signed in to Tartini AI, or the sign-in ended (it lasts up to 90 days, and ends after 30 days without use, or when it was disconnected). Tell the person to run `/mcp`, choose `plugin:tartini:tartini`, then Authenticate, and sign in with Google in the browser and press Allow. Someone who added Tartini AI with an API key for scripts gets the same 401 when the key was revoked: they generate a new one on tartini.ai (Settings, Claude Code). Never ask anyone to paste a key or a token into the chat or a file. Stop here until it works.
 3. Choose the project:
    - one project matches the repository: use its id as `projectId` in every project tool;
    - none matches: `list_projects_overview`; if none of those is this site, offer `create_project`, and create it only when the person agrees;

@@ -3,29 +3,12 @@
   "name": "ai.tartini/tartini",
   "title": "Tartini AI",
   "description": "A website's GA4 tracking definitions, Measurement Plans and metrics, kept by Tartini AI.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "websiteUrl": "https://tartini.ai/docs/claude-code",
   "remotes": [
     {
       "type": "streamable-http",
-      "url": "https://mcp.tartini.ai/mcp",
-      "headers": [
-        {
-          "name": "Authorization",
-          "description": "Bearer and your Tartini AI API key. Generate the key at https://tartini.ai/settings.html#claude-code",
-          "isRequired": true,
-          "isSecret": true,
-          "value": "Bearer {tartini_api_key}",
-          "variables": {
-            "tartini_api_key": {
-              "description": "Your Tartini AI API key. It starts with tartini_",
-              "isRequired": true,
-              "isSecret": true,
-              "placeholder": "tartini_..."
-            }
-          }
-        }
-      ]
+      "url": "https://mcp.tartini.ai/mcp"
     }
   ]
 }

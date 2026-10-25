@@ -4,20 +4,9 @@ Tartini AI keeps a website's analytics in one project: its GA4 tracking definiti
 
 If you already use Tartini AI on tartini.ai, it is the same account and the same projects.
 
-> The plugin is not published yet. The Tartini AI MCP server (`mcp.tartini.ai`) is not live yet either.
-
 ## Install
 
-1. **Get an API key.** Sign in on [tartini.ai](https://tartini.ai), open [Settings, Claude Code](https://tartini.ai/settings.html#claude-code) and generate a key. It starts with `tartini_` and is shown once. New to Tartini AI? [Sign up here](https://tartini.ai/?ref=claude-code).
-2. **Put the key in your shell profile** (for example `~/.zshrc` or `~/.bashrc`), then open a new terminal:
-
-   ```bash
-   export TARTINI_API_KEY="<your key>"
-   ```
-
-   - Use exactly the name `TARTINI_API_KEY`. In an MCP server's headers, Claude Code reads `ANTHROPIC_API_KEY` and its other credential names as empty, so a key stored under one of them never reaches Tartini AI.
-   - Keep the key out of every file in a repository. Never add the server with `claude mcp add --scope project`: that writes the server into the repository's `.mcp.json` for everyone who clones it.
-3. **Install the plugin:**
+1. **Install the plugin:**
 
    ```bash
    claude plugin marketplace add tartini-ai/claude-plugin
@@ -25,9 +14,18 @@ If you already use Tartini AI on tartini.ai, it is the same account and the same
    ```
 
    Or, inside a Claude Code session: `/plugin install tartini --marketplace tartini-ai/claude-plugin`.
-4. **Sign in to Google** for BigQuery (next section), then start Claude Code in your repository and run `/mcp`. You should see `plugin:tartini:tartini` and `plugin:tartini:bigquery` connected.
+2. **Sign in to Tartini AI.** Start Claude Code in your repository, run `/mcp`, choose `plugin:tartini:tartini` and then **Authenticate**. Your browser opens tartini.ai: sign in with Google, choose your workspace and press **Allow**. New to Tartini AI? Signing in creates your account.
+3. **Sign in to Google** for BigQuery (next section). Then `/mcp` lists `plugin:tartini:tartini` and `plugin:tartini:bigquery` as connected.
 
-If `plugin:tartini:tartini` does not connect, run `claude mcp list`: a warning about `TARTINI_API_KEY` means the variable is not set in the terminal that started Claude Code. Tartini AI answers a wrong or revoked key with a 401 that names the page where you generate a new one.
+What you allow: Claude Code can read your projects, tracking, metrics, plans and tables; create projects, save and change Measurement Plans, and save, check and change metric definitions (Tartini AI computes each saved metric daily in your BigQuery); save, change and remove tracking event definitions; add descriptions to your tracked events and tables (written into BigQuery only for the tables Tartini AI manages); and check your pull requests and link them to your projects, read-only on GitHub. It cannot delete your projects, plans, metrics or data, or spend your Credits: Claude Code uses its own model.
+
+Claude Code renews the sign-in by itself. A sign-in lasts up to 90 days, and ends after 30 days without use; then `/mcp` asks you to Authenticate again. To disconnect this computer, choose `plugin:tartini:tartini` in `/mcp` and **Clear authentication**, or revoke it under Connected apps in [Settings, Claude Code](https://tartini.ai/settings.html#claude-code) on tartini.ai. Its next call is refused.
+
+If `plugin:tartini:tartini` does not connect, run `/mcp`: it says when the server needs you to sign in. Tartini AI answers a call with no sign-in, or one that has ended, with a 401 that says how to sign in.
+
+### For scripts and CI: an API key
+
+Where nobody can sign in in a browser, add Tartini AI with an API key instead, as the [setup guide](https://tartini.ai/docs/claude-code#key) says: generate the key in [Settings, Claude Code](https://tartini.ai/settings.html#claude-code), set it as `TARTINI_API_KEY` (never `ANTHROPIC_API_KEY`, which Claude Code never sends to another server), and run the guide's `claude mcp add --transport http --scope user tartini …` command with its `--header`. Never add it with `--scope project`: that writes the key into the repository's `.mcp.json`. When the plugin is installed too, both point at the same address and Claude Code uses the server you added yourself. A key can do exactly what a sign-in can.
 
 ## BigQuery, through Google's BigQuery MCP
 
@@ -118,7 +116,7 @@ Every task starts the same way: Claude calls `get_started` with your repository'
 
 ## If you already use Tartini AI on the web
 
-Generate the key with the same Tartini AI account. Tartini AI finds your project from the repository's git remote, and the events, plans and metrics you made on the web are there. A tracking change made from Claude Code is shown on its run page as "Made in Claude Code", and a metric saved from Claude Code as "Saved from Claude Code", waiting for you to confirm it. Claude Code's conversations are not shown on tartini.ai. Calls from Claude Code run no Tartini AI model and use no Credits.
+Sign in with the same Tartini AI account, and choose the workspace your projects are in. Tartini AI finds your project from the repository's git remote, and the events, plans and metrics you made on the web in that workspace are there. A tracking change made from Claude Code is shown on its run page as "Made in Claude Code", and a metric saved from Claude Code as "Saved from Claude Code". Claude Code's conversations are not shown on tartini.ai. Calls from Claude Code run no Tartini AI model and use no Credits.
 
 ## Security and privacy: what the plugin connects to, sends, stores and reads
 
@@ -126,11 +124,11 @@ The plugin connects to exactly two remote services.
 
 ### 1. Tartini AI's MCP server, `https://mcp.tartini.ai/mcp` (Tartini AI LLC)
 
-- **Sent with every request:** your API key, in the `Authorization` header.
+- **Sent with every request:** the access token of your sign-in (or, for scripts and CI, your API key), in the `Authorization` header. Claude Code keeps your sign-in's tokens in its own credential storage, renews them by itself, and sends them only to this address. Tartini AI keeps only their SHA-256 hashes, and a record of the sign-in: you, the workspace, when it was made, last used and ends, and why it ended if it was revoked.
 - **Sent when Claude calls a tool:** the tool's arguments. These are your repository's git remote (owner/repo), your git branch name, project ids, tracking event definitions (names, parameters, when they fire), Measurement Plan text, metric names, definitions and SQL, and a pull request number. When Claude checks a tracking change, it also sends the base commit and the diff of your local change (`git diff`).
-- **Stored by Tartini AI:** what you ask it to keep. That is the tracking event definitions, Measurement Plans and their versions, metrics and their versions (marked as saved from Claude Code), the pull request you link (its number, link and head commit) and the result of the last check (each finding's file, line and rule, its time and base commit). It does not keep the diff or any of your code. It also records when your key was last used, counts calls per key to limit their rate, and keeps an internal record of each call that changes something, so that a retried call does not change it twice.
+- **Stored by Tartini AI:** what you ask it to keep. That is the tracking event definitions, Measurement Plans and their versions, metrics and their versions (marked as saved from Claude Code), the pull request you link (its number, link and head commit) and the result of the last check (each finding's file, line and rule, its time and base commit). It does not keep the diff or any of your code. It also records when your sign-in or key was last used, counts calls per sign-in or key to limit their rate, and keeps an internal record of each call that changes something, so that a retried call does not change it twice.
 - **Read by Tartini AI, on its side:** your GitHub repository at the commits Claude names, and the pull requests you link, through the Tartini AI GitHub App with a read-only token. When you connected BigQuery on tartini.ai, it also reads BigQuery metadata, checks a metric's SQL with a dry run and computes your metrics each day, as your project's own Tartini AI service account.
-- No model runs on Tartini AI for these calls, and they use no Credits. Tartini AI sends your key nowhere, and the key is in no log.
+- No model runs on Tartini AI for these calls, and they use no Credits. Tartini AI sends your token or key nowhere, and neither is in any log.
 
 ### 2. Google's BigQuery MCP server, `https://bigquery.googleapis.com/mcp` (Google)
 
@@ -142,7 +140,7 @@ The plugin connects to exactly two remote services.
 
 - `scripts/gcloud-token` runs only when Claude Code connects to the `bigquery` server. It runs `gcloud auth print-access-token` and prints the header to Claude Code. It writes nothing, caches nothing and sends nothing itself.
 - The skills and commands are instructions for Claude. They ask Claude to run git commands (`git remote get-url origin`, `git branch --show-current`, and for tracking changes `git merge-base` and `git diff`) and, for tracking work, to edit files, run your project's tests and open a pull request with git and `gh`. Claude Code asks your permission as usual.
-- The plugin stores nothing: no configuration file, no cache and no telemetry. Your key stays in your environment variable.
+- The plugin stores nothing: no configuration file, no cache and no telemetry. Your sign-in is kept by Claude Code; a key, if you use one, stays in your environment variable.
 - The `evals/` folder holds test cases for `claude plugin eval`. A normal session never loads them.
 
 ## Support
