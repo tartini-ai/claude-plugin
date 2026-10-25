@@ -2,8 +2,8 @@
 
 This is the normative physical-table contract for Tartini-managed BigQuery tables created or
 maintained by a BigQuery Native Scheduled Query. The customer-side IAM runbook is
-[`bigquery-permissions.md`](bigquery-permissions.md); the broader product boundaries remain canonical
-in [`tables-product-design.md`](tables-product-design.md) and
+`bigquery-permissions.md`; the broader product boundaries remain canonical
+in `tables-product-design.md` and
 [`tables-best-practices.md`](tables-best-practices.md).
 
 > **Runtime migration note:** This deterministic BigQuery contract is runtime-independent and

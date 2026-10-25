@@ -283,12 +283,12 @@ existing source rows, columns or table resources.
 
 ## Other sections of this reference (not included above: 21 of 26)
 read_guide({ domain: "tables", section: "<heading>" }) returns any of them whole.
-- "(intro)" (4416 characters)
-- "Rule 1 — One BigQuery source authority; a workspace is not data" (2237 characters)
+- "(intro)" (4233 characters)
+- "Rule 1 — One BigQuery source authority; a workspace is not data" (2210 characters)
 - "Rule 3 — No implicit file-backed table" (408 characters)
 - "Rule 4 — Unsupported reads fail closed and preserve facts" (381 characters)
 - "Rule 5 — Creation is gated on the server" (1280 characters)
-- "Rule 6 — Project-scoped Tables workspace (Redesign v2)" (2445 characters)
+- "Rule 6 — Project-scoped Tables workspace (Redesign v2)" (2402 characters)
 - "Rule 6a — BigQuery connection setup enables the real warehouse execution path" (3146 characters)
 - "Rule 6b — One description vocabulary, one schema grid, every table" (1811 characters)
 - "Rule 6c — UI and Assistant share one canonical BigQuery source catalog" (3866 characters)
@@ -300,9 +300,9 @@ read_guide({ domain: "tables", section: "<heading>" }) returns any of them whole
 - "Rule 8 — One OpenCode agent; Tartini AI is the boundary host" (1514 characters)
 - "Runtime and secret isolation" (1101 characters)
 - "General workspace and artifacts" (1571 characters)
-- "Rule 9 — Data model and real previews" (2658 characters)
+- "Rule 9 — Data model and real previews" (2600 characters)
 - "Rule 9a — No second scheduler or hidden data mart" (291 characters)
-- "Rule 9b — Saved Query is metadata; Query Workspace reuses the one read-query path" (1884 characters)
+- "Rule 9b — Saved Query is metadata; Query Workspace reuses the one read-query path" (1855 characters)
 - "Rule 10 — Adding or changing a table capability" (2650 characters)
 === end reference ===
 
@@ -784,7 +784,7 @@ never a second run for a day Google already took.
 
 ## Sections of this reference not selected for this guide (16)
 read_guide({ domain: "tables", section: "<heading>" }) returns any of them whole.
-- "(intro)" (3271 characters)
+- "(intro)" (3216 characters)
 - "1. Scope and precedence" (1343 characters)
 - "6.0 The physical target exists before any `MERGE`" (2354 characters)
 - "9. Physical creation workflow" (6338 characters)

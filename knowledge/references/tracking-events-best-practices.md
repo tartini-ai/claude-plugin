@@ -5,12 +5,12 @@ instrumentation, so this doc is the spec the agent follows. GA4 **requirements**
 event names, parameters, and limits) are authoritative; the product-specific taxonomy and operating
 practices are recommended patterns.
 
-Full system design: [`../overall/DESIGN.md`](../overall/DESIGN.md) §7/§9.
+Full system design: `../overall/DESIGN.md` §7/§9.
 
 > **Runtime migration note:** Tracking capabilities and this GA4 contract remain unchanged. The
 > coding runtime moves to OpenCode + OpenRouter inside the same disposable candidate workspace;
 > Tartini AI still owns git/GitHub, validation, promotion, transactions and receipts. See
-> [`opencode-openrouter-runtime.md`](../overall/opencode-openrouter-runtime.md).
+> `opencode-openrouter-runtime.md`.
 
 > **For visualizing events in the Website Preview, read the system prompt +
 > wrong-render ledger in [`website-preview-playbook.md`](./website-preview-playbook.md).**
@@ -637,14 +637,14 @@ dependency commands, with no network. What it writes reaches the Candidate only 
 `finish_event_implementation`. `GitHubRepository` is the only production source provider. Tartini AI owns exact revision, Candidate replay, validation, approval-gated
 publication and receipts. This does not change the analytics rules or SDK-vs-user-code boundary.
 Canonical
-architecture: [`../overall/unified-toastia-mcp.md`](../overall/unified-toastia-mcp.md).
+architecture: `../overall/unified-toastia-mcp.md`.
 
 **One Assistant entry (implemented):** a user question, source inspection, Event change and PR
 request all enter one Tartini AI (`project_assist`) turn. The Agent may answer or use one or more scoped
 tools; there is no LLM intent resolver in front of it. Event creation, update, enabling autocapture,
 Event removal and rebuild use high-level MCP tools over one deterministic Event lifecycle service.
 Server policy, not model interpretation, owns confirmation and external effects. See
-[`tracking-assistant-single-agent-mcp.md`](./tracking-assistant-single-agent-mcp.md).
+`tracking-assistant-single-agent-mcp.md`.
 
 **The assistant creates/updates/removes on request — it NEVER refuses.** A direct, sufficiently
 grounded request enters the Event lifecycle immediately; it never

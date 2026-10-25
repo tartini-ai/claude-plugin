@@ -13,7 +13,7 @@ request; apply the heuristics with judgment.
 > **Runtime migration note:** Preview evidence, rendering and retry semantics remain unchanged.
 > OpenCode + OpenRouter replaces model/coding runtime calls only; it does not become Preview evidence
 > and cannot bypass deterministic revision, locator, runtime or provider checks. See
-> [`opencode-openrouter-runtime.md`](../overall/opencode-openrouter-runtime.md).
+> `opencode-openrouter-runtime.md`.
 
 Everything is driven by one canonical per-event preview record. Event ownership,
 visualization type, analysis state, and cardinality are separate dimensions — never collapse one
@@ -396,7 +396,7 @@ publication. There is no customer worktree, checkout or git-CLI publication path
 receives the message, history, screenshot and interaction context, then answers or calls scoped
 read/Event/PR tools. The Candidate Transaction and every Preview invariant
 below remain unchanged. See
-[`tracking-assistant-single-agent-mcp.md`](./tracking-assistant-single-agent-mcp.md).
+`tracking-assistant-single-agent-mcp.md`.
 
 **In force now:** an explicit PR-review action in the same Assistant reads an existing PR comment,
 persists its correction through the replayable Candidate plan (an Event command, or a durable

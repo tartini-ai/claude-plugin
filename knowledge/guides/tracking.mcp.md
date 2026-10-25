@@ -432,7 +432,7 @@ sends in place of many addresses' own pages is the top-level page of every one o
 
 ## Sections of this reference not selected for this guide (15)
 read_guide({ domain: "tracking", section: "<heading>" }) returns any of them whole.
-- "(intro)" (998 characters)
+- "(intro)" (929 characters)
 - "0. The central rule — LOG BEHAVIORS, CALCULATE METRICS" (982 characters)
 - "1. Event selection hierarchy (use the HIGHEST available level)" (21447 characters)
 - "3. Recommended event catalog" (255 characters)
@@ -445,7 +445,7 @@ read_guide({ domain: "tracking", section: "<heading>" }) returns any of them who
 - "9. Validation & QA" (1069 characters)
 - "10. Anti-patterns (avoid)" (618 characters)
 - "11. Definition of done" (450 characters)
-- "12. How Tartini AI applies all of this — product reference (not official GA4)" (6875 characters)
+- "12. How Tartini AI applies all of this — product reference (not official GA4)" (6794 characters)
 - "13. Official Google references" (1826 characters)
 === end reference ===
 
@@ -659,7 +659,7 @@ What Tartini AI tells a person about the Preview beside their Tracking draft, in
 
 ## Sections of this reference not selected for this guide (33)
 read_guide({ domain: "tracking", section: "<heading>" }) returns any of them whole.
-- "(intro)" (3363 characters)
+- "(intro)" (3318 characters)
 - "Permanent product contract" (4407 characters)
 - "Core Reference Heuristics" (5196 characters)
 - "The one question that decides everything: what does the event fire on?" (509 characters)
@@ -675,7 +675,7 @@ read_guide({ domain: "tracking", section: "<heading>" }) returns any of them who
 - "Rule 10 — The preview is an evidence artifact — chat-correctable" (591 characters)
 - "Rule 11 — Gotcha: the relay's extras are a STRING" (657 characters)
 - "Rule 11a — One protocol, two bridges, and a direct frame only after a handshake" (2141 characters)
-- "Cross-cutting Tartini AI behavior (NOT preview-location heuristics)" (1705 characters)
+- "Cross-cutting Tartini AI behavior (NOT preview-location heuristics)" (1661 characters)
 - "Rule 12 — The AI assistant executes direct Event lifecycle requests — it NEVER refuses" (3045 characters)
 - "Rule 13 — Pure gtag implementation & standard code generation (no private markers)" (1646 characters)
 - "Rule 14 — Candidate Lifecycle & Non-Blocking Preview" (1497 characters)

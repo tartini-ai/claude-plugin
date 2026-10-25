@@ -4,4 +4,4 @@ expect:
   name: string
   sql: string
 ---
-{"ok":true,"tool":"save_metric","changed":["saved {{input.name}} as version 1, waiting for review"],"data":{"metric":{"id":"met_new","name":"{{input.name}}","version":1,"status":"pending","origin":"claude_code"},"page":"https://tartini.ai/metric.html?project=prj_petal&id=met_new","note":"Pending until a person presses Confirm on its page on tartini.ai."}}
+{"ok":true,"tool":"save_metric","requested":["save the metric \"{{input.name}}\""],"changed":["saved version 1 of \"{{input.name}}\", computed from now on"],"data":{"metric":{"id":"met_new","name":"{{input.name}}","version":1,"status":"active","computedVersion":1},"created":true,"changed":true,"activated":true,"check":{"verified":true,"dryRun":{"accepted":true,"bytesProcessed":18874368}},"next":"It is active: its last 90 days are computed by the next daily pass, then one day a day."}}

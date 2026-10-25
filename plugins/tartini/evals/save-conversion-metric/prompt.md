@@ -1,5 +1,5 @@
 ---
-description: A metric to save. The metrics skill fires, get_started comes first, the SQL is tried with Google's BigQuery MCP, checked with check_metric and saved pending a person's review.
+description: A metric to save. The metrics skill fires, get_started comes first, the SQL is tried with Google's BigQuery MCP, checked with check_metric and saved, computed at once because its check passed.
 tags: [metrics, skill-trigger]
 max_turns: 40
 timeout_seconds: 900

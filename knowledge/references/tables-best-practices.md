@@ -1,24 +1,24 @@
 # Tables Feature — Best Practices
 
 Project-scoped, real-data Tables with a hard data-source gate. Canonical P0 product design:
-[`tables-product-design.md`](tables-product-design.md). System summary:
-[`../overall/DESIGN.md`](../overall/DESIGN.md) §13. Customer-side Google Cloud setup:
-[`BigQuery Tables permissions and Project Admin checklist`](bigquery-permissions.md). Approved
+`tables-product-design.md`. System summary:
+`../overall/DESIGN.md` §13. Customer-side Google Cloud setup:
+`BigQuery Tables permissions and Project Admin checklist` (`bigquery-permissions.md`). Approved
 creation/update contract for scheduled physical tables:
 [`BigQuery scheduled-table creation and update best practices`](bigquery-table-creation-best-practices.md).
 Approved BigQuery Saved Query/editor contract:
-[`Query Workspace`](query-workspace-design.md).
+`Query Workspace` (`query-workspace-design.md`).
 
 > **Architecture status:** OpenCode + OpenRouter is implemented; see
-> [`opencode-openrouter-runtime.md`](../overall/opencode-openrouter-runtime.md). Tables already uses
+> `opencode-openrouter-runtime.md`. Tables already uses
 > the one control-plane core shared with Dashboard and Tracking. The canonical contract is
-> [`unified-toastia-mcp.md`](../overall/unified-toastia-mcp.md). Do not narrow a Tables capability or
+> `unified-toastia-mcp.md`. Do not narrow a Tables capability or
 > merge its BigQuery policy into another domain while extracting shared mechanics.
 
 > **Cloud-only status: IMPLEMENTED.** The shared source gate, the project-scoped Workspace UI and Assistant
 > conversations are BigQuery-only. File-event sources, logging-table paths and fallbacks are removed;
 > legacy rows are refused explicitly. See
-> [`cloud-native-product-architecture.md`](../overall/cloud-native-product-architecture.md).
+> `cloud-native-product-architecture.md`.
 >
 > **BigQuery warehouse execution is also IMPLEMENTED** (`app/bigquery.js` and its single-purpose
 > modules), as the project's own keyless managed service account (`tdata-*`), which the customer's
@@ -87,7 +87,7 @@ Tartini AI only creates new objects and changes only the ones it recorded there.
 and must never be derived from `canRunSql && canCreateTables`. Only a real transfer-config lifecycle
 proves it, and it needs the Data Transfer API, the scheduled-query permissions and the delegation from
 the customer's Data Transfer service agent to the project's service account
-([bigquery-permissions.md](bigquery-permissions.md) checks 8, 10 and 12). So a connection can be
+(bigquery-permissions.md checks 8, 10 and 12). So a connection can be
 `ready` + `limited_access`: connected, fully usable, and unable to schedule until those are in place.
 Connection state and access level are separate badges and one never overrides the other.
 
@@ -146,7 +146,7 @@ destination: the tool's `dataset` is checked against live state and confirmed on
                                                   table moves to `?id=`, `…_*` opens its newest day
 ```
 
-In Redesign v2 ([`../overall/project-workflow-redesign.md`](../overall/project-workflow-redesign.md)), the legacy bare
+In Redesign v2 (`../overall/project-workflow-redesign.md`), the legacy bare
 `/tables.html` aggregate Project List is **retired**; navigating to bare `/tables.html` canonically redirects to `/projects.html`.
 Tables operates strictly in project-scoped workspace mode (`/tables.html?project=<id>`).
 When BigQuery is disconnected, `/tables.html?project=<id>` displays the inline BigQuery setup assistant directly for that project
@@ -660,7 +660,7 @@ Dashboard widgets bind a BigQuery source or query under same-Project ownership a
 Missing/wrong-Project sources never fall back to another table. Plan execution and displayed Source
 SQL share one compiler; query provenance is the exact statement executed. Manual and Dashboard-Assistant
 edits use one draft/query service. Full contract:
-[`../dashboards/dashboard-data-binding-and-provenance.md`](../dashboards/dashboard-data-binding-and-provenance.md).
+`../dashboards/dashboard-data-binding-and-provenance.md`.
 
 ## Rule 9a — No second scheduler or hidden data mart
 
@@ -670,7 +670,7 @@ the scheduled-table/backfill contract.
 
 ## Rule 9b — Saved Query is metadata; Query Workspace reuses the one read-query path
 
-Follow [`query-workspace-design.md`](query-workspace-design.md). A Saved Query is a Project-scoped,
+Follow `query-workspace-design.md`. A Saved Query is a Project-scoped,
 durable name + SQL definition with server-owned `toastia | user` provenance. Saving is not executing,
 opening is not executing, running is not saving, and there is no autosave or auto-run. SQL drafts may
 be persisted before they parse; the existing read-only classifier, dry run, cost policy and job

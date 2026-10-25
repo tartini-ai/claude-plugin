@@ -5,7 +5,7 @@ Seven cases check that the plugin leads Claude to the right flow. Each one calls
 | Case | Prompt | What it checks |
 | --- | --- | --- |
 | `add-tracking` | Add tracking so we know when someone clicks the Sign up button on the home page. | the `tracking` skill fires; `get_started` before `read_guide`; the Tracking guide is read; the event is defined on the work branch after the guide |
-| `save-conversion-metric` | Save a conversion-rate metric for this project: the share of sessions that start checkout. | the `metrics` skill fires; `get_started` first; the SQL is tried with Google's BigQuery MCP; `check_metric` before `save_metric`; the reply says it waits for review |
+| `save-conversion-metric` | Save a conversion-rate metric for this project: the share of sessions that start checkout. | the `metrics` skill fires; `get_started` first; the SQL is tried with Google's BigQuery MCP; `check_metric` before `save_metric`; the reply says it is computed from now on, never that it waits for review |
 | `events-in-project` | Which events does this project have? | the `tracking` skill fires; `get_started` before `get_tracking_state`; the answer keeps code events, Autocapture and automatic events apart |
 | `landing-button-clicks` | Which landing-page button was clicked most this week? | the `metrics` skill fires; `get_started` first; `list_metrics` before the query; the number comes from Google's BigQuery MCP |
 | `ga4-health-check` | Health-check my GA4 setup. | `/tartini:doctor` fires on its own; it reads GA4 and the BigQuery export, finds nothing wrong on healthy answers and changes nothing |
