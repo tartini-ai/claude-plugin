@@ -93,15 +93,15 @@ It is not part of this plugin, and Tartini AI never sees what it reads.
 
 ## What you get
 
-Skills, which Claude uses on its own when your request matches, even when you never say "Tartini":
+Skills, which Claude uses on its own when your request matches, even when you never say "Tartini". Each one is public in [`skills/`](skills/), the full text Tartini AI's server gives Claude Code:
 
 | Skill | When Claude uses it |
 | --- | --- |
-| `setup` | Starting analytics work in a repository, checking what is connected, a key or permission problem |
-| `tracking` | Adding, changing or listing GA4 events, Tartini Autocapture, the Google tag |
-| `metrics` | Questions about your numbers, and defining, checking or saving a metric |
-| `measurement-plan` | What to measure for a launch, a page, a checkout, a campaign or an experiment |
-| `ga4-bigquery-consent` | Cookie banners, consent managers and Google Consent Mode, and a traffic total that does not depend on consent |
+| [`setup`](skills/setup/SKILL.md) | Starting analytics work in a repository, checking what is connected, a key or permission problem |
+| [`tracking`](skills/tracking/SKILL.md) | Adding, changing or listing GA4 events, Tartini Autocapture, the Google tag |
+| [`metrics`](skills/metrics/SKILL.md) | Questions about your numbers, and defining, checking or saving a metric |
+| [`measurement-plan`](skills/measurement-plan/SKILL.md) | What to measure for a launch, a page, a checkout, a campaign or an experiment |
+| [`ga4-bigquery-consent`](skills/ga4-bigquery-consent/SKILL.md) | Cookie banners, consent managers and Google Consent Mode, and a traffic total that does not depend on consent (its details are the files beside its SKILL.md) |
 
 Commands you type:
 
