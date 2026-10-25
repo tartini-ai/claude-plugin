@@ -2,6 +2,8 @@
 name: measurement-plan
 description: Write, revise or read a Measurement Plan with Tartini AI, the document that says what a launch, a landing page, a checkout, an ad campaign or an experiment should measure, with its goal, core metrics, the tracking it needs and the BigQuery query behind each metric. Use it whenever someone asks what to measure, wants a tracking plan, an analytics plan, a KPI plan or success metrics for a feature or a launch, or asks to change, compare or implement an existing plan, even if they never say Measurement Plan.
 user-invocable: false
+metadata:
+  channels: mcp, plugin
 ---
 
 # Measurement Plans with Tartini AI

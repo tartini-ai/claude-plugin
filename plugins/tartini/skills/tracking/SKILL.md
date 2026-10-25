@@ -2,6 +2,8 @@
 name: tracking
 description: Add, change, remove or list a website's analytics tracking, such as GA4 events and their parameters, Tartini Autocapture, page views and the Google tag, with Tartini AI keeping the event definitions and checking your local change before the pull request. Use it whenever someone asks to track a click, a sign up, a purchase, a form or any other user action, asks which events a site or project has or sends, wants GA4 or Google Analytics added or fixed in code, or changes code that sends analytics events, even if they never mention Tartini.
 user-invocable: false
+metadata:
+  channels: mcp, plugin
 ---
 
 # Tracking with Tartini AI

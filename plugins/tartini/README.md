@@ -101,7 +101,7 @@ Skills, which Claude uses on its own when your request matches, even when you ne
 | `tracking` | Adding, changing or listing GA4 events, Tartini Autocapture, the Google tag |
 | `metrics` | Questions about your numbers, and defining, checking or saving a metric |
 | `measurement-plan` | What to measure for a launch, a page, a checkout, a campaign or an experiment |
-| `ga4-bigquery-consent` | Cookie banners, consent managers and Google Consent Mode. Its text is read from Tartini AI's server |
+| `ga4-bigquery-consent` | Cookie banners, consent managers and Google Consent Mode, and a traffic total that does not depend on consent |
 
 Commands you type:
 
@@ -112,7 +112,7 @@ Commands you type:
 | `/tartini:status` | Shows the project, its connections, the tracking on this branch, metrics and plans. Reads only |
 | `/tartini:doctor [GA4 property id]` | Health-checks the Google tag, Autocapture, what GA4 received in the last 7 days, custom dimensions and the BigQuery export. Checks first and changes nothing, then asks which fixes to make |
 
-Every task starts the same way: Claude calls `get_started` with your repository's git remote, reads the area's guide from Tartini AI with `read_guide`, and queries data with Google's BigQuery MCP. The guides and rules stay on Tartini AI's server, so this plugin carries no copy of them.
+Every task starts the same way: Claude calls `get_started` with your repository's git remote, reads the area's guide from Tartini AI with `read_guide`, and queries data with Google's BigQuery MCP. The guides and rules stay on Tartini AI's server, so this plugin carries no copy of them. The skills are the ones Tartini AI's server gives Claude Code without the plugin, word for word.
 
 ## If you already use Tartini AI on the web
 
