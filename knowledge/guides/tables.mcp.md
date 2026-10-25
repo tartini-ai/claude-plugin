@@ -818,6 +818,7 @@ mentions and never edits its text; it is checked with a dry run (`check_metric`)
   value`: steps numbered from 1 with no gap, each step's value the sessions that reached it in order.
 - **A 7-day window** also takes `@lookback_start_suffix`, which code binds six days before the range
   starts, so the first day has a whole window.
+
 - **Its breakdown** is a second statement taking `@dimension` (one of the metric's dimension keys,
   `CASE @dimension WHEN 'country' THEN … END`): one row per value over the whole range,
   `dimension_value STRING, value` and at most one more count column (a funnel: `dimension_value, step,
@@ -872,6 +873,29 @@ LEFT JOIN (
     FROM UNNEST(@category_sources) AS source WITH OFFSET AS i
     JOIN UNNEST(@category_names) AS category WITH OFFSET AS j ON i = j
   ) AS cat ON cat.source = t.source
+```
+
+- **A day with no event is a 0; a day the export does not hold is no day.** A count or an amount returns a row
+  for every day the export holds over the days asked for — its tables' own days, whatever their events, never
+  this metric's filtered ones — so a day with export data and nothing counted is a true 0, and a day whose table
+  has not landed (today, a gap in the export) stays absent. Without it a quiet day has no row, the page shows no
+  number for it, and the line is drawn with a gap. A rate is never filled: its day with no denominator is NULL.
+  Count into a CTE named `counted` (`day, value`), then:
+
+```sql
+source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+)
+```
+
+```sql
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 ## 12. Advertising

@@ -378,6 +378,24 @@ item_bd AS (
 )
 ```
 
+### Days with no event
+
+A count or an amount over GA4 events returns a row for EVERY day the export holds over the days asked for,
+whatever that day's events: a quiet day is a true 0, and a day whose table has not landed (today, a gap in the
+export) is no row at all, never a zero for a day nobody measured. Without it a quiet day has no row, the metric's
+page shows no number for it and its line has a gap. A rate, a ratio or an average is never filled: its day with
+no denominator is NULL. When you save a count from a template below (Active users, New users, Returning users,
+Sessions, Organic search sessions, Purchases, Revenue, Leads), name its final statement's result `counted` and
+finish it with the GA4 export SQL reference §11 blocks, exactly as written there: the `source_days` CTE (the
+export's own days, over `@start_suffix` and `@end_suffix`) and
+
+```sql
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
+```
+
 ## Version 1: without ads
 
 Every site's ten. Active, New and Returning users read the export directly, like Google's own sample

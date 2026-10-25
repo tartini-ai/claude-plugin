@@ -28,7 +28,9 @@ reading its days through @start_suffix and @end_suffix; code binds the parameter
 and never edits its text. Its breakdown SQL takes @dimension, one of the dimensions it lists, and
 returns one row per value over the whole range. Count views, sessions and channels exactly as the GA4
 export SQL reference §11 writes them — its channel CASE and its view rule are used whole, never
-rewritten. A rate is in percentage points. Check with check_metric before you save, fix what it
+rewritten. A rate is in percentage points. A count or an amount returns a row for every day the GA4 export
+holds (§11, "A day with no event is a 0"): a quiet day is a 0, a day not landed is no day; a rate is never
+filled. Check with check_metric before you save, fix what it
 reports, then save_metric. A version whose check passes is computed at once, starting with its last 90
 days; nobody confirms it. One whose check fails, or that BigQuery could not check, is saved and NOT
 computed (a changed metric keeps computing its last good version): say why and fix it. Never say a metric
@@ -58,6 +60,9 @@ real metrics instead and list the tiles you cannot ground.
 - `events` names the GA4 events the metric counts, so the page can say which one the code does not send.
 - A funnel's `compareWith` is another funnel of this project with the same steps (the paid funnel beside
   the whole one); its numbers are read from what is stored, never queried again.
+- How the person SEES the Metrics page on tartini.ai (its days, list or cards, order, sizes, colours,
+  columns, hidden metrics) is theirs, set on that page or by asking Tartini AI there: there is no tool
+  for it here, and it never changes a metric.
 
 ## Analysis
 
@@ -237,6 +242,7 @@ mentions and never edits its text; it is checked with a dry run (`check_metric`)
   value`: steps numbered from 1 with no gap, each step's value the sessions that reached it in order.
 - **A 7-day window** also takes `@lookback_start_suffix`, which code binds six days before the range
   starts, so the first day has a whole window.
+
 - **Its breakdown** is a second statement taking `@dimension` (one of the metric's dimension keys,
   `CASE @dimension WHEN 'country' THEN … END`): one row per value over the whole range,
   `dimension_value STRING, value` and at most one more count column (a funnel: `dimension_value, step,
@@ -291,6 +297,29 @@ LEFT JOIN (
     FROM UNNEST(@category_sources) AS source WITH OFFSET AS i
     JOIN UNNEST(@category_names) AS category WITH OFFSET AS j ON i = j
   ) AS cat ON cat.source = t.source
+```
+
+- **A day with no event is a 0; a day the export does not hold is no day.** A count or an amount returns a row
+  for every day the export holds over the days asked for — its tables' own days, whatever their events, never
+  this metric's filtered ones — so a day with export data and nothing counted is a true 0, and a day whose table
+  has not landed (today, a gap in the export) stays absent. Without it a quiet day has no row, the page shows no
+  number for it, and the line is drawn with a gap. A rate is never filled: its day with no denominator is NULL.
+  Count into a CTE named `counted` (`day, value`), then:
+
+```sql
+source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+)
+```
+
+```sql
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 ## 12. Advertising
@@ -568,11 +597,12 @@ each template's section has its lead SQL):
 | Ad conversions, Cost per conversion, Conversion gap, Ads vs GA4 (7-day) | count converting sessions instead of orders |
 | every other template | unchanged |
 
-## Other sections of this reference (not included above: 30 of 34)
+## Other sections of this reference (not included above: 31 of 35)
 read_guide({ domain: "metrics", section: "<heading>" }) returns any of them whole.
 - "Shared blocks" (179 characters)
 - "Shared GA4 block" (9647 characters)
 - "Shared breakdown blocks" (2504 characters)
+- "Days with no event" (992 characters)
 - "Version 1: without ads" (538 characters)
 - "Active users" (1167 characters)
 - "New users" (1194 characters)
