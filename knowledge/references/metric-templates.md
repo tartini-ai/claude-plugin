@@ -382,12 +382,10 @@ item_bd AS (
 
 A count or an amount over GA4 events returns a row for EVERY day the export holds over the days asked for,
 whatever that day's events: a quiet day is a true 0, and a day whose table has not landed (today, a gap in the
-export) is no row at all, never a zero for a day nobody measured. Without it a quiet day has no row, the metric's
-page shows no number for it and its line has a gap. A rate, a ratio or an average is never filled: its day with
-no denominator is NULL. When you save a count from a template below (Active users, New users, Returning users,
-Sessions, Organic search sessions, Purchases, Revenue, Leads), name its final statement's result `counted` and
-finish it with the GA4 export SQL reference §11 blocks, exactly as written there: the `source_days` CTE (the
-export's own days, over `@start_suffix` and `@end_suffix`) and
+export) is no row at all, never a zero for a day nobody measured. Every count and amount template below does it
+(Active users, New users, Returning users, Sessions, Organic search sessions, Purchases and Leads, Revenue, Ad
+conversions, Revenue from ads, Paid sessions): its own statement is the `counted` CTE, then the export's own days
+(the GA4 export SQL reference §11, whole) are joined to it:
 
 ```sql
 SELECT source_days.day, COALESCE(counted.value, 0) AS value
@@ -395,6 +393,10 @@ FROM source_days
 LEFT JOIN counted USING (day)
 ORDER BY day
 ```
+
+A rate, a ratio, an average and a funnel are never filled: a day with no denominator is NULL. A Google Ads
+template reads the transfer, not the export, and is left as it is. A count you write yourself is finished the
+same way.
 
 ## Version 1: without ads
 
@@ -415,13 +417,24 @@ value have no number ("purchase is not sent by the merged code yet."), and the f
 Daily SQL, whole:
 
 ```sql
-SELECT
-  PARSE_DATE('%Y%m%d', event_date) AS day,
-  COUNT(DISTINCT IF(is_active_user, user_pseudo_id, NULL)) AS value
-FROM `{{events_table}}`
-WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
-  AND device.web_info.hostname IN ({{production_hosts}})
-GROUP BY day
+WITH source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT
+    PARSE_DATE('%Y%m%d', event_date) AS day,
+    COUNT(DISTINCT IF(is_active_user, user_pseudo_id, NULL)) AS value
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+    AND device.web_info.hostname IN ({{production_hosts}})
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -452,13 +465,24 @@ GA4's own `first_visit` event: never "the first page_view in the range".
 Daily SQL, whole:
 
 ```sql
-SELECT
-  PARSE_DATE('%Y%m%d', event_date) AS day,
-  COUNT(DISTINCT IF(event_name = 'first_visit', user_pseudo_id, NULL)) AS value
-FROM `{{events_table}}`
-WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
-  AND device.web_info.hostname IN ({{production_hosts}})
-GROUP BY day
+WITH source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT
+    PARSE_DATE('%Y%m%d', event_date) AS day,
+    COUNT(DISTINCT IF(event_name = 'first_visit', user_pseudo_id, NULL)) AS value
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+    AND device.web_info.hostname IN ({{production_hosts}})
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -491,7 +515,13 @@ came back the same day counts as new and as returning.
 Daily SQL, whole:
 
 ```sql
-WITH users AS (
+WITH source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+users AS (
   -- Each person's day: active, and in a session that is not their first.
   SELECT
     PARSE_DATE('%Y%m%d', event_date) AS day,
@@ -503,10 +533,15 @@ WITH users AS (
     AND device.web_info.hostname IN ({{production_hosts}})
     AND user_pseudo_id IS NOT NULL
   GROUP BY day, user_pseudo_id
+),
+counted AS (
+  SELECT day, COUNTIF(active AND came_back) AS value
+  FROM users
+  GROUP BY day
 )
-SELECT day, COUNTIF(active AND came_back) AS value
-FROM users
-GROUP BY day
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -536,9 +571,20 @@ ORDER BY value DESC
 Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT day, COUNT(*) AS value
-FROM classified
-GROUP BY day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT day, COUNT(*) AS value
+  FROM classified
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -596,9 +642,20 @@ The Organic Search channel of §11's rule: a site without ads gets most of its v
 Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT day, COUNTIF(organic) AS value
-FROM classified
-GROUP BY day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT day, COUNTIF(organic) AS value
+  FROM classified
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -628,9 +685,20 @@ A purchase with no transaction ID is not an order; Tartini's tracking always sen
 Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT day, COUNT(*) AS value
-FROM orders
-GROUP BY day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT day, COUNT(*) AS value
+  FROM orders
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -662,11 +730,22 @@ Breakdown: S, no Items. Daily SQL: the shared GA4 block, then:
   FROM events
   WHERE event_name = {{conversion_event}} AND session_key IS NOT NULL
 )
-SELECT c.day, COUNT(*) AS value
-FROM classified AS c
-JOIN converted AS v USING (session_key)
-GROUP BY c.day
-ORDER BY c.day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT c.day, COUNT(*) AS value
+  FROM classified AS c
+  JOIN converted AS v USING (session_key)
+  GROUP BY c.day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 Its breakdown: the shared GA4 block and `session_bd`, the same `converted`, then:
@@ -691,13 +770,24 @@ A refund is subtracted on the day it happened. A shop that sells in several curr
 Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT day, SUM(amount) AS value
-FROM (
-  SELECT day, revenue AS amount FROM orders
-  UNION ALL
-  SELECT day, -refunded AS amount FROM refunds
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT day, SUM(amount) AS value
+  FROM (
+    SELECT day, revenue AS amount FROM orders
+    UNION ALL
+    SELECT day, -refunded AS amount FROM refunds
+  )
+  GROUP BY day
 )
-GROUP BY day
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
@@ -955,12 +1045,23 @@ GA4's side: never Google Ads' own conversions, which count another way (Conversi
 Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT o.day, COUNT(*) AS value
-FROM orders AS o
-JOIN classified AS c USING (session_key)
-WHERE c.paid
-GROUP BY o.day
-ORDER BY o.day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT o.day, COUNT(*) AS value
+  FROM orders AS o
+  JOIN classified AS c USING (session_key)
+  WHERE c.paid
+  GROUP BY o.day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 **Breakdown:** `landing_page`, `hostname`, `channel`, `source`, `medium`, `campaign`, `country`, `region`, `city`, `language`, `device_category`, `browser`, `os`, `os_version`, `device_model`, `user_type` · no extra column
@@ -985,12 +1086,23 @@ Daily SQL: the shared GA4 block, then:
   FROM events
   WHERE event_name = {{conversion_event}} AND session_key IS NOT NULL
 )
-SELECT c.day, COUNT(*) AS value
-FROM classified AS c
-JOIN converted AS v USING (session_key)
-WHERE c.paid
-GROUP BY c.day
-ORDER BY c.day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT c.day, COUNT(*) AS value
+  FROM classified AS c
+  JOIN converted AS v USING (session_key)
+  WHERE c.paid
+  GROUP BY c.day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 Its breakdown: the shared GA4 block and `session_bd`, the same `converted`, then:
@@ -1158,14 +1270,25 @@ A refund is subtracted on its order's day here, so a paid order's refund never l
 paid orders. Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT o.day, SUM(o.revenue) - IFNULL(SUM(r.refunded), 0) AS value
-FROM orders AS o
-JOIN classified AS c USING (session_key)
-LEFT JOIN (SELECT transaction_id, SUM(refunded) AS refunded FROM refunds GROUP BY transaction_id) AS r
-  USING (transaction_id)
-WHERE c.paid
-GROUP BY o.day
-ORDER BY o.day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT o.day, SUM(o.revenue) - IFNULL(SUM(r.refunded), 0) AS value
+  FROM orders AS o
+  JOIN classified AS c USING (session_key)
+  LEFT JOIN (SELECT transaction_id, SUM(refunded) AS refunded FROM refunds GROUP BY transaction_id) AS r
+    USING (transaction_id)
+  WHERE c.paid
+  GROUP BY o.day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
+ORDER BY day
 ```
 
 **Breakdown:** `landing_page`, `hostname`, `channel`, `source`, `medium`, `campaign`, `country`, `region`, `city`, `language`, `device_category`, `browser`, `os`, `os_version`, `device_model`, `user_type` · no extra column
@@ -1366,9 +1489,20 @@ A Google Ads click is a session GA4 names a Google Ads campaign for, or one with
 channels are §11's. Daily SQL: the shared GA4 block, then:
 
 ```sql
-SELECT day, COUNTIF(paid) AS value
-FROM classified
-GROUP BY day
+, source_days AS (
+  -- Every day the export holds over the days asked for, whatever its events.
+  SELECT DISTINCT PARSE_DATE('%Y%m%d', _TABLE_SUFFIX) AS day
+  FROM `{{events_table}}`
+  WHERE _TABLE_SUFFIX BETWEEN @start_suffix AND @end_suffix
+),
+counted AS (
+  SELECT day, COUNTIF(paid) AS value
+  FROM classified
+  GROUP BY day
+)
+SELECT source_days.day, COALESCE(counted.value, 0) AS value
+FROM source_days
+LEFT JOIN counted USING (day)
 ORDER BY day
 ```
 
