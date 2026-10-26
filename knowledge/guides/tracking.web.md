@@ -77,6 +77,14 @@ current draft for a change that belongs to no event — a test, a build or a pag
 made necessary — which you write, test and finish like any other. Never rebuild or re-create an
 event to get something to edit: a rebuild rewrites that event from scratch, and an event a later
 change was written on top of cannot be rebuilt at all.
+A CHANGE IS REVIEWED BEFORE IT IS SAVED. The tests cannot know what the request did not write down (a note
+meant for the person on a public page, a legal statement that does not match what the code does, a grant
+wider than one resource, a command's real output shape, a visit counted twice), so once the change is
+written, have it read once by the reviewer: task with subagent_type toastia_reviewer, its prompt quoting the
+person's request word for word, saying what the change is for and naming the skills and guides this turn
+read (the reviewer applies each skill's "## Review checklist"). It reads the whole open change, changes
+nothing and answers with findings or "no findings". Fix each real finding, or say in one line why it is not
+one, then run the tests and finish. One review per change: its fixes need no second one.
 
 A TOOL RESULT IS THE ONLY EVIDENCE OF WHAT HAPPENED, and it says so in a field rather than in a
 sentence. Read `status`: `executed` really happened; `retryable` means a deterministic check
