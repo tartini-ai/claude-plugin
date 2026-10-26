@@ -1,39 +1,39 @@
-# Platform commands (Google Cloud)
+# The platform settings
 
 Part of the ga4-bigquery-consent skill.
 
-Write these as code so the next deploy applies them: into the repository's infrastructure code where it
-already configures the load balancer or the log sink; where it does not, as ONE new script beside the deploy
-script (for example `scripts/setup-consent-platform.sh`), called from the deploy script, with nothing more
-searched for. The script is idempotent and has a dry run: each step reads what is set and creates only what
-is missing, keeping what is already there. With no deploy script at all, give the person these commands
-with their own names filled in. The agent never runs them itself. The project's Tartini service
-account (the BigQuery connection's, in the project's state) needs only read access to the raw dataset when
-the log line carries no IP address.
+## Google Cloud: the reviewed script
 
-```bash
-# What the backend already sets: the flags below REPLACE the whole list, so repeat every header shown.
-gcloud compute backend-services describe BACKEND --global \
-  --format='value(customRequestHeaders,customResponseHeaders)'
+gcp-consent-platform.sh, beside this file, is the whole Google Cloud half (the region header, the raw log
+dataset, the sink and the two dataset-level grants): idempotent, a dry run unless given `--apply`, stopping on
+any write that fails, and tested against gcloud's and bq's real outputs. Copy it beside the deploy script (at
+the repository's root when there is none), never retype it:
 
-# The visitor's country on every response, for the page's consent module to read (no server code).
-gcloud compute backend-services update BACKEND --global \
-  --custom-response-header='X-Client-Region:{client_region}'
-# Check: the header comes back with your own country.
-curl -sI https://SITE/ | grep -i x-client-region
+    cp <this skill's base directory>/gcp-consent-platform.sh scripts/gcp-consent-platform.sh
 
-# Only for a server that reads the region itself (the log line below): the same value on each request.
-gcloud compute backend-services update BACKEND --global \
-  --custom-request-header='X-Client-Region:{client_region}'
+The base directory is the one your skill tool named when it loaded this skill. Where you read the skill with
+read_skill instead, write the text read_skill gives for this file unchanged, and check that `shasum -a 256` of
+the copy prints the sha256 it gave. Never change a line of the copy: every value is a flag.
 
-# A raw log dataset whose partitions expire after 30 days, beside the GA4 export.
-bq --location=LOCATION mk --dataset --default_partition_expiration=2592000 PROJECT:web_requests_raw
+**The one call**, in the deploy script after the site is deployed, each flag a fact you read:
 
-# The sink: the app's page-load lines (or the platform's request logs) into that dataset.
-gcloud logging sinks create web-page-loads \
-  bigquery.googleapis.com/projects/PROJECT/datasets/web_requests_raw \
-  --use-partitioned-tables \
-  --log-filter='resource.type="cloud_run_revision" AND jsonPayload.kind="page_load"'
-# Then grant the sink's writer identity (printed by the command) BigQuery Data Editor on the dataset,
-# and the project's Tartini service account BigQuery Data Viewer on it, for the all-visitors metric.
-```
+    sh scripts/gcp-consent-platform.sh --apply --project PROJECT --backend BACKEND_SERVICE \
+      --location LOCATION --dataset web_requests_raw --sink web-page-loads \
+      --log-filter 'resource.type="cloud_run_revision" AND jsonPayload.kind="page_load"' \
+      --reader SERVICE_ACCOUNT_EMAIL --request-header
+
+- `--project`: the project the deploy script deploys to (its own variable for it).
+- `--backend`: the global backend service the load balancer sends the site to, by its name in the repository.
+- `--location`: where the GA4 export dataset is (get_project_state), so the two can be joined.
+- `--reader`: the service account of the project's BigQuery connection (get_project_state).
+- `--log-filter`: your log line's entries, on the resource type the site runs as (Cloud Run above).
+- `--request-header`: when your log line writes the region. `--dataset`, `--sink`: names not in use yet.
+
+The person runs the same line without `--apply` first: the dry run prints each change as its command.
+
+## Other hosts, or no deploy script
+
+There is no script: give the person the settings in your reply, as steps or commands with their own names.
+The region header: Cloudflare, Vercel and CloudFront add one from their own country value with an edge rule
+or function (write-the-change.md). The logs: bigquery.md. On Google Cloud with no deploy script, copy the
+script all the same and give its call, the dry run first.

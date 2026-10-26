@@ -24,3 +24,18 @@ Checked on 2026-10-22.
 - Practice: Simo Ahava on Consent Mode v2; CookieFirst and CookieYes on basic versus advanced and
   geo-targeted banners; PostHog's and Plausible's cookieless designs; Mixpanel's IP-to-region enrichment;
   Fastly's and Vercel's log export.
+
+Checked on 2026-10-26, for the platform script and the server's count:
+
+- Google Cloud CLI 582.0.0, read for what it does: `compute backend-services update` replaces the whole list of
+  custom headers it is given (`--custom-request-header`, `--custom-response-header`, each repeatable), and
+  `logging sinks create` gives every sink its own writer identity. Its outputs were recorded read-only: a
+  backend with no custom headers prints `null` in JSON, a tab in `value(a,b)` and one empty line with
+  `--flatten`; a list prints `;`-joined in `value()` and one item a line with `--flatten`; a missing sink is
+  exit 1 with `NOT_FOUND` on stderr; with bq 2.1.37 a missing dataset is exit 2 with `Not found: Dataset`
+  on stdout, wrapped over lines, and a dataset-level grant shows in `access` as `READER` or `WRITER` with
+  `userByEmail`.
+- BigQuery: docs.cloud.google.com/bigquery/docs/reference/standard-sql/data-control-language (`GRANT ... ON
+  SCHEMA`, a role on one dataset).
+- Fetch Metadata: w3c.github.io/webappsec-fetch-metadata/ (`Sec-Fetch-Dest`: `document` for a top-level
+  page, `iframe` for a frame); Chrome's prefetch and prerender requests carry `Sec-Purpose`.

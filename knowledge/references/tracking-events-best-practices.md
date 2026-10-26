@@ -519,8 +519,9 @@ instruction), and a tagged page that does not load the consent mechanism yet get
 never narrowed to the pages that happen to run it today. Never load analytics before consent on a site
 that asks for it, and never write a tag where the site's own tests forbid one outside its consent gate.
 Changing HOW a site asks (which regions are asked first, collecting by default with an opt-out, Consent Mode,
-a traffic total that does not depend on consent) is the `ga4-bigquery-consent` skill's: load it, tell the person,
-and change nothing before they agree.
+a traffic total that does not depend on consent) is the `ga4-bigquery-consent` skill's: load it. A request to change
+it is the person's yes, and the change is made in that turn; a question that asks for a recommendation waits for
+their answer.
 The install brief names the files and consent-manager scripts to read first
 (`ga4-baseline.consentCandidates`); which mechanism it is, and how a tag is registered with it, is
 read from the code.

@@ -20,5 +20,6 @@ Read these from the code and the data. Ask the person only what neither can answ
   what it is: only visitors who were counted, so on a site that asks everyone it is the consenting few.
   Too little data is an answer too ("not enough to tell"); then ask the person whom the site is for.
 - **Where the site runs.** The host and CDN decide where a visitor's country can come from (write-the-change.md).
+  On Google Cloud, by search: the deploy script, and the backend service its load balancer sends the site to.
 - **BigQuery.** Whether GA4 exports to it (the `analytics_<property id>` dataset and its location), and
   whether server or CDN logs already land anywhere.
