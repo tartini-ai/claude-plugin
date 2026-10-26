@@ -16,5 +16,8 @@ Part of the ga4-bigquery-consent skill.
   that one. Other hosts: Fastly streams logs to BigQuery natively; Vercel forwards them through Log Drains;
   Cloudflare and CloudFront write them to object storage, which BigQuery loads.
 - **Two metrics.** Page loads, all visitors (`day`, `value`, counted from the raw log lines), and the consent
-  rate: GA4 `page_view` events divided by the server's page loads, for the same days and pages. Filter bots
-  before comparing, and say that the server count includes the site's own team.
+  rate: GA4 `page_view` events divided by the server's page loads, for the same days and pages. Compare only
+  pages both count as page loads: a page shown inside a frame of the same site (an app shell that changes
+  page in place) sends GA4 a `page_view` for each in-app navigation and never reaches the server as a
+  document, so such pages stay out of the rate. Filter bots before comparing, and say that the server count
+  includes the site's own team.

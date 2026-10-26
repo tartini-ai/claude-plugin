@@ -16,9 +16,15 @@ and say once what it risks.
 
 Consent comes first for: the European Economic Area (the 27 EU countries, Iceland, Liechtenstein and
 Norway), the United Kingdom, Switzerland, and any visitor whose region cannot be told. That is the area
-Google's own EU user consent policy covers. One change to know: since 5 February 2026 UK law (the Data
-(Use and Access) Act 2025, in PECR) lets a site use analytics without asking first when its only purpose
-is aggregate statistics to improve the site, visitors are told clearly and can object simply and for free,
-and nothing goes to a third party except to improve the service; advertising never qualifies. Whether a
-given GA4 set-up meets that is a judgement for the person and their adviser, so keep the UK consent-first
-unless they decide it does.
+Google's own EU user consent policy covers. A region lookup gives some places in the EU codes of their own,
+and a list of countries alone collects from them by default: the EU's outermost regions Guadeloupe (GP),
+French Guiana (GF), Martinique (MQ), Mayotte (YT), Réunion (RE) and Saint-Martin (MF), the Åland Islands
+(AX, part of Finland), and, in the Unicode CLDR codes Google Cloud's load balancer gives, the Canary Islands
+(IC) and Ceuta and Melilla (EA). The Azores and Madeira come as PT. Saint-Barthélemy (BL) left the EU in
+2012, and Greenland (GL) and the Faroe Islands (FO) are outside it: they are not on the list.
+
+One change to know: since 5 February 2026 UK law (the Data (Use and Access) Act 2025, in PECR) lets a site
+use analytics without asking first when its only purpose is aggregate statistics to improve the site,
+visitors are told clearly and can object simply and for free, and nothing goes to a third party except to
+improve the service; advertising never qualifies. Whether a given GA4 set-up meets that is a judgement for
+the person and their adviser, so keep the UK consent-first unless they decide it does.

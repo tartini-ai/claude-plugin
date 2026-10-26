@@ -9,11 +9,13 @@ keep notes.
 
 - **Find out first with one call.** Ask your exploration subagent once (on the web, Tartini AI's explorer
   through task; in Claude Code, its Explore agent), with every code question of find-out-first.md in its
-  prompt: where the consent module (or the manager's set-up) is, the file that loads the Google tag, the
-  privacy policy's cookie section, the tests that name the consent module, the deploy script's last step and
-  the backend its load balancer sends the site to, and the one place the server answers a request for a
-  page. It searches in its own context and answers with file:line facts and short excerpts. The data
-  questions (where the visitors are, the BigQuery export) are your own tools'.
+  prompt: where the consent module (or the manager's set-up) is, the file that loads the Google tag and
+  every other reader of the globals the consent change touches (`window.gtag`, `dataLayer`), the footer's
+  legal links and their markup, the privacy policy's cookie section, the tests that name the consent module,
+  the deploy script's step helper, its final checks and the backend its load balancer sends the site to,
+  and the order in which the server mounts its middleware, its page routes and its static files. It searches
+  in its own context and answers with file:line facts and short excerpts. The data questions (where the
+  visitors are, the BigQuery export) are your own tools'.
 - **Read only these.** The lines you will change in those files, by the lines its answer names. Never read a
   large file whole, and never the files it already answered. The region needs no server code
   (write-the-change.md).
@@ -33,18 +35,19 @@ Begin it once, with begin_draft_correction, as soon as the first is saved. It st
 finish_event_implementation answers, through any summary of your context: do not begin it a second time. An
 empty `git status` means nothing is written yet, not a conflict.
 
-1. **The log line, first.** The one place the server answers a request for a page (its static file handler or
-   its page route) is in the explorer's answer, or found by search: read only the lines around that match,
-   never the server file whole. Add
-   the line there at once, the way the server already writes a structured log line (write-the-change.md says
-   what it holds and how a visit is counted once).
+1. **The log line, first.** Where the server mounts its middleware, ahead of the first route that answers a
+   page, is in the explorer's answer, or found by search: read only the lines around that match, never the
+   server file whole. Mount the line's middleware there at once, so that every page passes through it, and
+   write the line when the response finishes, the way the server already writes a structured log line
+   (write-the-change.md says what it holds and which responses count).
 2. **The platform script, second.** Where the repository already configures the load balancer's headers or a
    log sink as code (Terraform, a deploy step that sets them), add the settings there. Otherwise, on Google
    Cloud, copy gcp-consent-platform.sh from this skill's base directory beside the deploy script, byte for
    byte (platform-commands.md). Never write it, or any cloud automation, yourself; never edit the copy.
-3. **The one call, third.** Where the deploy script's last step runs is in the explorer's answer, or found by
-   search: read those lines, and add the one line that runs the script with `--apply` and its flags
-   (platform-commands.md). Never read the deploy script whole.
+3. **The one call, third.** The deploy script's step helper and its final checks are in the explorer's
+   answer, or found by search: read those lines, and add the one step that runs the script with `--apply`
+   and its flags, through that helper, after the final checks (platform-commands.md). Never read the deploy
+   script whole.
 4. **Then the tests, once.** Run the project's whole test script and read only what failed: a test that pins
    the deploy script or the server says there what it expects. Fix what your change broke, then
    finish_event_implementation. Do not read the tests before you write, to guess what they will say.

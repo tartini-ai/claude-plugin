@@ -15,7 +15,10 @@ The base directory is the one your skill tool named when it loaded this skill. W
 read_skill instead, write the text read_skill gives for this file unchanged, and check that `shasum -a 256` of
 the copy prints the sha256 it gave. Never change a line of the copy: every value is a flag.
 
-**The one call**, in the deploy script after the site is deployed, each flag a fact you read:
+**The one call**, once, in the deploy script, as one of its own steps: through the helper the script runs its
+steps with when it has one (the one that names a step and bounds its time), and after the deploy's own final
+checks, so a failure or a hang there cannot leave a deploy half rolled out. Each flag is a fact you read, and a
+value the deploy script already holds (its project) is its own variable, never a literal:
 
     sh scripts/gcp-consent-platform.sh --apply --project PROJECT --backend BACKEND_SERVICE \
       --location LOCATION --dataset web_requests_raw --sink web-page-loads \
@@ -29,7 +32,9 @@ the copy prints the sha256 it gave. Never change a line of the copy: every value
 - `--log-filter`: your log line's entries, on the resource type the site runs as (Cloud Run above).
 - `--request-header`: when your log line writes the region. `--dataset`, `--sink`: names not in use yet.
 
-The person runs the same line without `--apply` first: the dry run prints each change as its command.
+In a deploy script whose steps go through a helper, that line is the helper's command (for example
+`<its step helper> "the consent platform" sh scripts/gcp-consent-platform.sh --apply ...`). The person runs the
+same line without `--apply` first: the dry run prints each change as its command.
 
 ## Other hosts, or no deploy script
 

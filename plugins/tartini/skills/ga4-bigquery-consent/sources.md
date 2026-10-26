@@ -39,3 +39,23 @@ Checked on 2026-10-26, for the platform script and the server's count:
   SCHEMA`, a role on one dataset).
 - Fetch Metadata: w3c.github.io/webappsec-fetch-metadata/ (`Sec-Fetch-Dest`: `document` for a top-level
   page, `iframe` for a frame); Chrome's prefetch and prerender requests carry `Sec-Purpose`.
+
+Checked on 2026-10-26, for the consent-first list, GPC over a stored choice, withdrawing and the server's count:
+
+- The EU's outermost regions: TFEU Article 349 (Guadeloupe, French Guiana, Martinique, Mayotte, Réunion,
+  Saint-Martin, the Azores, Madeira and the Canary Islands; eur-lex.europa.eu/eli/treaty/tfeu_2016/art_349/oj)
+  and the European Parliament's fact sheet on them (europarl.europa.eu/factsheets/en/sheet/100); European
+  Council Decision 2010/718/EU (Saint-Barthélemy an overseas country and territory, outside the EU, from 1
+  January 2012); Protocol No 2 on the Åland Islands to Finland's Act of Accession
+  (eur-lex.europa.eu/eli/treaty/acc_1994/act_1/pro_2/sign): the Treaties apply there, and its derogations are
+  on property, establishment and indirect tax.
+- The codes: ISO 3166-1 alpha-2 (GP, GF, MQ, YT, RE, MF, AX); Unicode CLDR's region codes, which add IC (the
+  Canary Islands) and EA (Ceuta and Melilla), and which Google Cloud's `{client_region}` gives
+  (docs.cloud.google.com/load-balancing/docs/https/custom-headers-global).
+- California: 11 CCR §7025(c)(3) (law.cornell.edu/regulations/california/11-CCR-7025): an opt-out preference
+  signal that conflicts with a business-specific setting allowing sale or sharing is processed as an opt-out;
+  the business may tell the consumer of the conflict and ask for consent, and once they consent it may ignore
+  the signal. §7025(c)(6): a site may show that it honoured the signal.
+- PostHog: posthog.com/docs/privacy/data-collection (`opt_out_capturing()` is kept in the browser, in a cookie
+  or local storage; `opt_in_capturing()` undoes it).
+- Node.js: nodejs.org/api/http.html (a response's `finish` event, once it has been handed to the system).

@@ -17,6 +17,9 @@ from one call to your exploration subagent (do-the-work.md), not from reading th
   link in the footer ("Your privacy choices"); whether `navigator.globalPrivacyControl` (GPC) is read.
 - **What the site promises.** The privacy policy's cookie section, and the project's own tests that pin
   the consent behaviour: a change to consent changes both, in the same change.
+- **What else reads what you will change.** Code that sends only when `typeof window.gtag === 'function'`
+  or reads `dataLayer`, and a tool that keeps an opt-out of its own (PostHog's, for example): the change
+  must leave each of them right (write-the-change.md).
 - **Where the visitors are.** GA4 by country (the Data API, or the BigQuery export's `geo.country`). Say
   what it is: only visitors who were counted, so on a site that asks everyone it is the consenting few.
   Too little data is an answer too ("not enough to tell"); then ask the person whom the site is for.
