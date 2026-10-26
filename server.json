@@ -3,7 +3,7 @@
   "name": "ai.tartini/tartini",
   "title": "Tartini AI",
   "description": "A website's GA4 tracking definitions, Measurement Plans and metrics, kept by Tartini AI.",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "websiteUrl": "https://tartini.ai/docs/claude-code",
   "remotes": [
     {

@@ -37,11 +37,13 @@ event: a new event goes through whatever consent the site already has.
   project's consent tests, together. The region comes from the edge (`X-Client-Region` on Google Cloud's
   load balancer), read with one same-origin request; no answer within half a second means consent first.
   GPC is an opt-out. The Google tag is only added to, never wrapped or taken away.
-- **The second change, the server's total** (bigquery.md, platform-commands.md): one structured log line
-  where the server sends a page, and the platform settings (the header, a log sink, a dataset) as code.
-  Where the repository has no infrastructure code for the load balancer or the log sink, do not search
-  for it: add ONE new idempotent script with a dry run beside the deploy script, call it from the deploy
-  script, and stop there. You never run it; the person's next deploy does.
+- **The second change, the server's total** (do-the-work.md's order, platform-commands.md's commands): one
+  structured log line where the server sends a page, and the platform settings (the header, a log sink, a
+  dataset) as code. Where the repository has no infrastructure code for the load balancer or the log sink,
+  do not search for it: add ONE new idempotent script with a dry run beside the deploy script, call it from
+  the deploy script, and stop there. Write each piece as soon as you know it: the log line, the script, then
+  the one call, found by searching the deploy script, never reading it whole. You never run it; the
+  person's next deploy does.
 - **Work in few files** (do-the-work.md): read only the consent module, the tag loader, the privacy
   policy's cookie section and the tests that name the module, by search; write the whole change, run the
   project's tests once, fix what is yours, and save. Keep notes in `.tartini/notes.md`. A saved change is
@@ -56,7 +58,7 @@ directory, or on Claude Code's channel with read_skill({ name: "ga4-bigquery-con
 - decide.md: the recommendation table, the consent-first regions and the UK's 2026 change.
 - tell-the-person.md: what to say before writing anything, and when to wait.
 - write-the-change.md: the region from the edge (with the decision code), GPC, the opt-out link, Consent Mode, the log line.
-- do-the-work.md: how to do the work in few files, and how to carry on after a summary.
+- do-the-work.md: how to do the work in few files, the second change's order, and how to carry on after a summary.
 - bigquery.md: what the GA4 export holds, logs into BigQuery and the two metrics.
 - verify.md: how to check it once it is live.
 - platform-commands.md: the Google Cloud commands, and where they go as code.
