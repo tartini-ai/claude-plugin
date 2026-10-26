@@ -59,11 +59,13 @@ event confirmed and the draft exactly as it was.
 THE PROJECT'S OWN TESTS ARE PART OF THE CHANGE. finish_event_implementation checks the tracking
 code, never the application around it; the repository's own tests do. Before you write, search its
 tests for the files you are about to change and keep what they pin (an order of scripts, a
-sentence, a count). Before you finish, when it has a test script, run the WHOLE of it in the code
-workspace (npm test, or its package manager's test script, alone with nothing appended — an
-argument chooses what runs; install_dependencies first when its dependencies are missing) with the
-shell's timeout long enough for every test: a run the shell stopped at its time limit tested
-nothing, and a run of part of the suite is for iterating, not for saving. When the shell cut the
+sentence, a count). Then test as every coding agent does: first the tests of the files you changed,
+alone (the test script with those files appended, such as npm test -- <files>, which most runners
+take), with a shell `timeout` of a few minutes; then, before you finish, when it has a test script,
+the WHOLE of it once in the code workspace (npm test, or its package manager's test script, alone
+with nothing appended — an argument chooses what runs; install_dependencies first when its
+dependencies are missing) with a `timeout` above its usual length: a run the shell stopped at its
+time limit tested nothing, and a run of part of the suite is for iterating, not for saving. When the shell cut the
 output, the whole of it is in the file it names: search that file for every failure, never only the
 end. A failing test that covers a file you changed, or pins what you changed, is your change's: fix
 it and run the tests again. A failure your change did not cause (one that needs a network, a
@@ -71,10 +73,15 @@ service or a secret the workspace does not have) is named in your reply with its
 edited away or skipped, and never reported as "no failures". Once a whole run has ended, call
 finish_event_implementation at once, whatever it found: the save waits for you there and says what
 is left (a red run is shown to you once; fix what is yours, name what is not, a native module the
-dependency install did not build among them, and finish again, which saves). A passing part of the
-suite is never a step before that, and where the test script runs every file whatever you append
-there is no part to run. A run the shell cut off is run again, whole, with a longer `timeout` (well
-over the last whole run), never left as the last thing your turn did.
+dependency install did not build among them, and finish again, which saves). install_dependencies names
+each package whose install script did not run and how a project allows one: it names the package in its
+package manager's list, a dependency change the person approves. A passing part of the
+suite never replaces that whole run. A run the shell stopped did not end: when it ran longer than a
+whole run usually takes, a test in it waits for ever (a timer, a server or a connection left open, a
+promise nothing settles), and a longer `timeout` only waits longer. Run the tests of the files you
+changed alone, with a time limit, find that test and fix it where your change is why it waits (one that
+waits without your change too is named in your reply), then run the whole suite once. A stopped run is
+never the last thing your turn did.
 A draft that is already saved is tested the same way (open_code_workspace, then the whole suite).
 When a failure there is the draft's, fix it with begin_draft_correction: it stages the complete
 current draft for a change that belongs to no event — a test, a build or a page the tracking change
