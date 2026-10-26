@@ -2,7 +2,8 @@
 
 Part of the ga4-bigquery-consent skill.
 
-Read these from the code and the data. Ask the person only what neither can answer.
+Read these from the code and the data. Ask the person only what neither can answer. The code's answers come
+from one call to your exploration subagent (do-the-work.md), not from reading the files yourself.
 
 - **The consent mechanism.** None at all; a module of the site's own (a file whose name says consent,
   cookie or privacy, a banner in the markup); a consent manager (OneTrust, Cookiebot, Usercentrics,

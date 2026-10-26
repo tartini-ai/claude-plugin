@@ -41,8 +41,9 @@ event: a new event goes through whatever consent the site already has.
   counted once per visit, and the platform settings. On Google Cloud they are this skill's reviewed script,
   copied whole beside the deploy script and called from it with flags from facts (platform-commands.md);
   never write cloud automation yourself. You never run it: the person's next deploy does, after its dry run.
-- **Work in few files** (do-the-work.md): read by search, write each piece as soon as you know it, run the
-  project's tests once per change, and keep notes in `.tartini/notes.md`.
+- **Work in few files** (do-the-work.md): find out first with one call to your exploration subagent, then
+  read by search, write each piece as soon as you know it, run the project's tests once per change, and keep
+  notes in `.tartini/notes.md`.
 
 ## Review checklist
 
