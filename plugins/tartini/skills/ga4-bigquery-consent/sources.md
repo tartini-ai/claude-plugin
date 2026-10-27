@@ -71,3 +71,12 @@ Checked on 2026-10-26, for framed pages, the Consent Mode types, revalidated pag
   9111 §5.2.2.4 (`no-cache`: a cache revalidates before every reuse).
 - PostHog: posthog.com/docs/references/posthog-js (`opt_in_capturing()` captures an `$opt_in` event unless
   `captureEventName: false`; `has_opted_out_capturing()` says whether the visitor opted out).
+
+Checked on 2026-10-26, for a tool loaded later and the export's dates:
+
+- PostHog: posthog.com/docs/libraries/js/config (`loaded`: "A function to be called once the PostHog scripts
+  have loaded successfully"); posthog.com/docs/libraries/js (the snippet's stub methods push each call onto a
+  queue the library reads once it loads; a page with no stub has no `window.posthog` until its loader ran).
+- Google Analytics: support.google.com/analytics/answer/9823238 ("Once the linkage is complete, data should start
+  flowing to your BigQuery project within 24 hours") and answer/9358801 (it "exports all the raw, unsampled event
+  data once per day from the previous day"); neither page describes exporting days from before the link.

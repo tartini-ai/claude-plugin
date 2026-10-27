@@ -37,12 +37,22 @@ Part of the ga4-bigquery-consent skill.
     if (!region || CONSENT_FIRST.has(region)) return stored ? apply(stored.accepted) : showBanner();
     apply(!gpc);                                      // collect analytics by default, ads denied; GPC opts out
   }
+  // apply(granted) sends the Consent Mode update and each tool's opt-in or opt-out, AND starts what the site's own
+  // gate holds back for analytics on this page, without storing anything ("The gate the site already has", below).
   ```
 
   Collecting by default is not a choice the visitor made: do not store it, decide again on the next page.
   **Decide first, then show.** Nothing of the banner is drawn before `decide()` has its answer, so a visitor
   in a region that collects by default never sees it, not even for a moment; only a consent-first, unknown
   or late region shows it.
+- **The gate the site already has.** A site often holds its tags back behind a gate of its own: loaders queued
+  until their category is granted, then run. Before you write, read how that gate releases what waits. If it
+  releases only on a STORED answer, collecting by default (which is never stored) releases nothing, and in every
+  region that collects by default the tag never starts: fewer visitors counted than before, not more. So the
+  default decision gives the gate its answer for this page without storing it (an in-memory decision the gate
+  reads beside the stored one), and `apply()` runs what was waiting. The site's tests prove it: in a region that
+  collects by default, with nothing stored, a loader registered through the gate runs, on the first page and on
+  the next.
 - **GPC.** `navigator.globalPrivacyControl === true` (the browser also sends `Sec-GPC: 1`) is an
   opt-out: in an opt-out region nothing non-essential runs, and the visitor is not asked to undo it.
   California's Attorney General requires businesses to honour it as a request to stop selling or sharing,
@@ -50,13 +60,20 @@ Part of the ga4-bigquery-consent skill.
   visitor stored while GPC was off. A site may tell the visitor the two differ and offer the choice again; an
   Accept given with GPC on counts, so store `withGpc` with it. A Reject always wins.
 - **The opt-out link.** "Your privacy choices", on every page that can run analytics, added by the consent
-  module itself. First find every place the site already links its privacy policy (a footer's legal links,
-  an account or settings menu, a sign-in page), and put the link beside each one, with the same element and
-  classes as its neighbours, once per document; a menu drawn later gets it when it is drawn. Only a page
-  that shows the policy's link nowhere gets a small fixed link, styled to be seen, never an unstyled native
-  button, and placed clear of the page's own fixed or sticky controls (read the layout's CSS for them: a
-  rail, a switcher, a chat button) and under its dialogs. The choice is stored in the visitor's own
-  browser; that record is strictly necessary.
+  module itself. First find every place the site already links its privacy policy as an item of a list of
+  links (a footer's legal links, an account or settings menu, a sign-in page's links), and put the link beside
+  each one as another item of that list, once per document: with the list's separator between them (the text
+  or element its items are joined by), and the markup its items use (the element, classes, attributes, role
+  and tab order a menu's keys rely on); a menu drawn later gets it when it is drawn. Never beside a policy link
+  inside a sentence of running text (a paragraph of a legal page), and never inside UI the consent module draws
+  itself (its own banner's policy link): a scan that matches every policy link, or rescans as the page changes,
+  finds those too. The choice is stored in the visitor's own browser; that record is strictly necessary.
+- **The fallback link.** Only a page that shows no such link, and on which none will appear, gets a small fixed
+  link: first read which policy links the page's shell or menus draw after it loads (an account menu injected
+  later), and draw the fallback only where none will come, or remove it when one does. It is styled to be seen,
+  never an unstyled native button, clear of the page's own fixed or sticky controls at every width (read the
+  layout's CSS and its media queries for them: a rail, a switcher, an assistant launcher), and under its dialogs
+  (read their z-index).
 - **A page framed by the same site.** A page shown in a frame of another page of the same site draws no
   link or banner of its own: the top page does, and the framed page applies what the top page's choice
   changes, so the visitor sees one control and gets one effect. A change to `localStorage` fires a
@@ -75,7 +92,10 @@ Part of the ga4-bigquery-consent skill.
   `opt_in_capturing()`).
 - **The banner's words, per region.** Where the site asks first, the banner asks for consent. Where it
   collects by default, the choice the link shows says that the site collects analytics by default and that
-  the visitor can turn it off; it never says "consent", which those visitors never gave.
+  the visitor can turn it off; it never says "consent", which those visitors never gave. The words follow the
+  region whether or not a choice is stored: showing the choice again looks the region up, even where a stored
+  choice let the page skip the lookup to decide. A visitor there with nothing stored sees the current state
+  (analytics on) marked; with GPC on, the words say GPC turned analytics off.
 - **Consent Mode, with gtag's own commands only.** `gtag('consent', 'default', { … 'denied' … })` before
   any command that sends data (`config`, `event`); `region: [...]` takes ISO 3166-2 codes (`'ES'`,
   `'US-CA'`) and the more specific default wins; `wait_for_update` (milliseconds) holds the tags for a
@@ -90,6 +110,14 @@ Part of the ga4-bigquery-consent skill.
   source or its docs: what it stores and what it sends. A call made on every page load is idempotent and
   sends nothing when nothing changed. PostHog's `opt_in_capturing()` captures an `$opt_in` event each time
   it runs, so: `if (posthog.has_opted_out_capturing()) posthog.opt_in_capturing({ captureEventName: false })`.
+- **A tool loaded later gets the choice where it starts.** A call to a tool that is not on the page yet does
+  nothing (a guard such as `if (window.tool)` skips it; only a vendor's own queueing stub, where the site uses
+  one, replays it later). Read when each tool loads relative to the consent module: a tool its tag loader loads
+  later is reached where it starts, so its loader reads the decision before it initialises the tool, or the
+  tool's own loaded callback applies it. Then an Accept given on a page where the tool never loaded (after a
+  stored Reject) turns it back on when it loads, on that page or a later one. The site's tests prove it in the
+  real load order: the tool absent when the module runs, Accept after a stored Reject, the tool opted in once it
+  loads.
 - **A global other code reads is a signal.** Before you create or change one (`window.gtag`, `dataLayer`, a
   consent flag), read every reader of it: site code that sends only when `typeof window.gtag === 'function'`
   takes a new `window.gtag` as leave to send, before any choice and after a Reject. So define the stub the
@@ -108,8 +136,20 @@ Part of the ga4-bigquery-consent skill.
   server logs are for (a count of page loads that does not depend on consent), what a line holds, and how
   long the raw logs are kept. Change only the sentences the change makes untrue, and add new paragraphs
   beside the old ones: never replace a paragraph about something else.
+- **Every sentence the change makes untrue.** The old behaviour is described in more places than the paragraph
+  you edit: other paragraphs of the policy, a subprocessor or vendor list, the terms, a cookie table. Search
+  every public page for its words ("before you accept", "only for visitors who accept", "none of these scripts
+  runs", "nothing loads until you agree") and change each sentence the new code makes untrue, so no two pages
+  give opposite answers; a test that pins one is updated to pin the new sentence. Say what Reject really stops:
+  each tool's opt-out stops that tool, while a Google tag already loaded may keep sending cookieless pings until
+  the next page.
+- **Keep what a choice records.** What Accept and Reject store follows the site's own rules (Accept records only
+  the categories the site uses, derived from what it runs); the change keeps a rule like that, and its test,
+  as they are.
 - **Notes for the person stay with the person.** "Common practice, not legal advice", your recommendations
-  and your caveats go in your reply, never into a page visitors read, a policy included.
+  and your caveats go in your reply, never into a page visitors read, a policy included. So does deployment
+  status ("until the region header exists, everyone is asked first"): a page says what the code does, and the
+  reply says when it starts doing it.
 - **The server's log line counts each page it sends, once.** The platform's own request logs count every
   request (frames, prefetches, the consent module's HEAD) and hold IP addresses, so the server writes one
   structured line for each page a visitor opens: only a GET of a top-level document (`Sec-Fetch-Dest:
@@ -134,8 +174,12 @@ Part of the ga4-bigquery-consent skill.
   choice, and a withdrawal then the next page. Also: the top page's Reject reaching a page of the same site
   framed in it that loaded the module (the denied update and each tool's opt-out there), with no link drawn
   in the framed page; a region that collects by default sending no `granted` ad type; and a page load with
-  the choice unchanged making no tool call that sends an event. A test that only matches the module's source
-  text proves none of it.
+  the choice unchanged making no tool call that sends an event. And the outcome, not only the signal: in a
+  region that collects by default, with nothing stored, a loader registered through the site's gate runs, on
+  the first page and the next; an Accept after a stored Reject turns a tool loaded later back on once it loads,
+  in the real load order; the link added to a footer's list keeps the list's separator, and none is added beside
+  a policy link inside a sentence or the banner. A Consent Mode update sent is not a tag started. A test that
+  only matches the module's source text proves none of it.
 - **The server's tests run the log line.** Request it as a browser would and check the lines it writes: a
   page, a `304` to a top-level document GET (counted), a `304` to anything else, a frame, a prefetch, a HEAD,
   an asset, a 404 and a redirect (none counted).
