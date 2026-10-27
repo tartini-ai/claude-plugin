@@ -9,12 +9,15 @@ it, then end the turn with ONE reply, in their language:
 
 1. what you found: the consent mechanism (its own module, a consent manager, Consent Mode, or none), when the
    Google tag starts, where the visitors are, whether GA4 exports to BigQuery and where the site runs, and
-   what that cost them (who GA4 could not see);
+   what that cost them (who GA4 could not see). Where the visitors are is in users, never events, and only
+   those GA4 counted: on a site that asks everyone, the consenting few; with too few, say "not enough to
+   tell";
 2. what you changed in each of the two saved changes, and why it fits their visitors;
 3. what they do next: review the draft, publish it, merge the pull request and deploy. Nothing changes for
    visitors before that, and until the platform's region header exists every visitor is asked first, as
    today. Give the platform script's dry run to run before the deploy: the line the deploy script calls,
-   without `--apply`;
+   without `--apply`, with every value filled in from what you read, so it runs as pasted (no shell
+   variable they have not set);
 4. how to check it once it is live (below, a few lines);
 5. the risks of what you did (decide.md's last column), and that this is common practice, not legal advice.
 

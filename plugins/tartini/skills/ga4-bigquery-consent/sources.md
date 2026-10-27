@@ -59,3 +59,15 @@ Checked on 2026-10-26, for the consent-first list, GPC over a stored choice, wit
 - PostHog: posthog.com/docs/privacy/data-collection (`opt_out_capturing()` is kept in the browser, in a cookie
   or local storage; `opt_in_capturing()` undoes it).
 - Node.js: nodejs.org/api/http.html (a response's `finish` event, once it has been handed to the system).
+
+Checked on 2026-10-26, for framed pages, the Consent Mode types, revalidated pages and vendor calls:
+
+- Google, consent types: developers.google.com/tag-platform/security/concepts/consent-mode (`analytics_storage`
+  for analytics; `ad_storage`, `ad_user_data` and `ad_personalization` for advertising).
+- The HTML Standard's web storage (html.spec.whatwg.org/multipage/webstorage.html) and MDN's "Window: storage
+  event": a change to `localStorage` fires `storage` in the other documents that share it, not in the one that
+  made it; a cookie fires no event.
+- HTTP: RFC 9110 §15.4.5 (`304 Not Modified` answers a conditional GET and need carry no content type) and RFC
+  9111 §5.2.2.4 (`no-cache`: a cache revalidates before every reuse).
+- PostHog: posthog.com/docs/references/posthog-js (`opt_in_capturing()` captures an `$opt_in` event unless
+  `captureEventName: false`; `has_opted_out_capturing()` says whether the visitor opted out).

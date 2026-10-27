@@ -2,10 +2,10 @@
 
 Part of the ga4-bigquery-consent skill.
 
-- **The region comes from the visitor's IP address, worked out at the edge, and reaches the page with no
-  server code.** The load balancer or CDN adds the visitor's country to every response as a header, and
-  the consent module reads it with one same-origin request before it decides. On Google Cloud the global
-  external Application Load Balancer does it with one setting (`X-Client-Region: {client_region}` as a
+- **The region comes from the edge.** The visitor's country is worked out from their IP address at the
+  edge and reaches the page with no server code. The load balancer or CDN adds it to every response as a
+  header, and the consent module reads it with one same-origin request before it decides. On Google Cloud
+  the global external Application Load Balancer does it with one setting (`X-Client-Region: {client_region}` as a
   custom response header, platform-commands.md); Cloudflare, Vercel and CloudFront can add a response header from their own
   country value with an edge rule or function. The country is the platform's estimate from the IP address.
   Never the browser's time zone or language, never a third-party lookup from the page, never a cookie. Only
@@ -35,7 +35,7 @@ Part of the ga4-bigquery-consent skill.
     if (stored && !(stored.accepted && gpc && !stored.withGpc)) return apply(stored.accepted);
     const region = await visitorRegion();             // nothing is shown before this answers
     if (!region || CONSENT_FIRST.has(region)) return stored ? apply(stored.accepted) : showBanner();
-    apply(!gpc);                                      // collect by default; GPC opts out
+    apply(!gpc);                                      // collect analytics by default, ads denied; GPC opts out
   }
   ```
 
@@ -50,23 +50,46 @@ Part of the ga4-bigquery-consent skill.
   visitor stored while GPC was off. A site may tell the visitor the two differ and offer the choice again; an
   Accept given with GPC on counts, so store `withGpc` with it. A Reject always wins.
 - **The opt-out link.** "Your privacy choices", on every page that can run analytics, added by the consent
-  module itself: inside the footer's existing legal links (beside the privacy policy's link), with the same
-  element and classes as its neighbours, once per document. A page with no footer gets a small fixed link,
-  styled to be seen, never an unstyled native button. A page shown in a frame of another page of the same
-  site draws no link or banner of its own: the top page does, and its choice takes effect in the framed page
-  too, so the visitor sees one control and gets one effect. The choice is stored in the visitor's own
+  module itself. First find every place the site already links its privacy policy (a footer's legal links,
+  an account or settings menu, a sign-in page), and put the link beside each one, with the same element and
+  classes as its neighbours, once per document; a menu drawn later gets it when it is drawn. Only a page
+  that shows the policy's link nowhere gets a small fixed link, styled to be seen, never an unstyled native
+  button, and placed clear of the page's own fixed or sticky controls (read the layout's CSS for them: a
+  rail, a switcher, a chat button) and under its dialogs. The choice is stored in the visitor's own
   browser; that record is strictly necessary.
+- **A page framed by the same site.** A page shown in a frame of another page of the same site draws no
+  link or banner of its own: the top page does, and the framed page applies what the top page's choice
+  changes, so the visitor sees one control and gets one effect. A change to `localStorage` fires a
+  `storage` event in every other document of the same origin, never in the one that wrote it: the framed
+  page listens for the consent key and, on a Reject, sends the denied update and each tool's opt-out (on an
+  Accept, the update and each opt-in). A choice kept in a cookie fires no event: the top page sends the frame
+  a message (`postMessage` to its own origin) or reloads it. A Google tag already loaded may keep sending
+  cookieless pings after a denied update, so the privacy policy says what Reject really stops, never "stops
+  everything at once" unless the code does.
 - **Showing the choice again, and withdrawing.** The link shows the choice again with the current one
   marked, and removes nothing: until the visitor picks, the page goes on as before, and the privacy policy
-  says exactly that. Reject sends the denied update at once, stops each tool that runs on consent, and is
-  stored. Accept turns back on everything a Reject turned off, a tool's own stored opt-out included
-  (PostHog's `opt_out_capturing()` stays in the browser until `opt_in_capturing()`).
+  says exactly that. The mark is one a sighted visitor sees (a label, or a style the stylesheet gives it),
+  never only an ARIA attribute or a class nothing styles. Reject sends the denied update at once, stops each
+  tool that runs on consent, and is stored. Accept turns back on everything a Reject turned off, a tool's
+  own stored opt-out included (PostHog's `opt_out_capturing()` stays in the browser until
+  `opt_in_capturing()`).
+- **The banner's words, per region.** Where the site asks first, the banner asks for consent. Where it
+  collects by default, the choice the link shows says that the site collects analytics by default and that
+  the visitor can turn it off; it never says "consent", which those visitors never gave.
 - **Consent Mode, with gtag's own commands only.** `gtag('consent', 'default', { … 'denied' … })` before
   any command that sends data (`config`, `event`); `region: [...]` takes ISO 3166-2 codes (`'ES'`,
   `'US-CA'`) and the more specific default wins; `wait_for_update` (milliseconds) holds the tags for a
   banner that loads late. `gtag('consent', 'update', { … })` as soon as the visitor chooses, and again on
-  every later page from the stored choice. The four types that matter: `analytics_storage`, `ad_storage`,
-  `ad_user_data`, `ad_personalization`. Never wrap, replace or patch `gtag` or `dataLayer`.
+  every later page from the stored choice. The four types that matter, and the choice each follows:
+  `analytics_storage` follows the analytics choice; `ad_storage`, `ad_user_data` and `ad_personalization`
+  follow the marketing choice. Where the site collects analytics by default, the three ad types stay denied
+  unless the visitor said yes to marketing, and a site that runs no advertising tag keeps them denied. Never
+  wrap, replace or patch `gtag` or `dataLayer`.
+- **A third-party call does what its installed version does.** Before calling a method that changes a
+  tool's state (an opt-in, an opt-out, a reset), read what the version the site installs does, in its
+  source or its docs: what it stores and what it sends. A call made on every page load is idempotent and
+  sends nothing when nothing changed. PostHog's `opt_in_capturing()` captures an `$opt_in` event each time
+  it runs, so: `if (posthog.has_opted_out_capturing()) posthog.opt_in_capturing({ captureEventName: false })`.
 - **A global other code reads is a signal.** Before you create or change one (`window.gtag`, `dataLayer`, a
   consent flag), read every reader of it: site code that sends only when `typeof window.gtag === 'function'`
   takes a new `window.gtag` as leave to send, before any choice and after a Reject. So define the stub the
@@ -81,10 +104,10 @@ Part of the ga4-bigquery-consent skill.
   runs on the visitor's consent. Where it collects by default, say exactly that: analytics runs by default,
   the visitor can opt out at any time ("Your privacy choices") and GPC is honoured as an opt-out, and name the
   basis the site relies on (for example legitimate interests); never call it consent, which those visitors
-  never gave. Say what "Your privacy choices" does as the code does it. Name what the server logs are for (a
-  count of page loads that does not depend on consent), what a line holds, and how long the raw logs are
-  kept. Change only the sentences the change makes untrue, and add new paragraphs beside the old ones: never
-  replace a paragraph about something else.
+  never gave. Say what "Your privacy choices" does, and where it is, as the code does it. Name what the
+  server logs are for (a count of page loads that does not depend on consent), what a line holds, and how
+  long the raw logs are kept. Change only the sentences the change makes untrue, and add new paragraphs
+  beside the old ones: never replace a paragraph about something else.
 - **Notes for the person stay with the person.** "Common practice, not legal advice", your recommendations
   and your caveats go in your reply, never into a page visitors read, a policy included.
 - **The server's log line counts each page it sends, once.** The platform's own request logs count every
@@ -92,21 +115,30 @@ Part of the ga4-bigquery-consent skill.
   structured line for each page a visitor opens: only a GET of a top-level document (`Sec-Fetch-Dest:
   document`, or the header absent), never a frame (`Sec-Fetch-Dest: iframe`), a prefetch or prerender
   (`Sec-Purpose`), a HEAD or an asset. Write it when the response finishes (Node's `res.on('finish')`, or
-  the framework's after-response hook), and only for a 2xx response whose type is HTML: never a 404, a
-  redirect, a dot-file or an error page. Mount it before every route that answers a page, so the pages a
-  route of their own answers before any static mount are counted too. A page shown in a frame of the same
-  address is one visit, not two. Write it in the shape of the server's other structured log lines (their
-  severity and message fields). The line holds the page path, the region (the `X-Client-Region` request
-  header), `ref` and `utm_*` from the address, the referring host, and whether the user agent is a known
-  bot: no IP address, no full user agent.
-- **The consent change is one change.** The consent code, the footer link, the privacy policy and the
+  the framework's after-response hook). **A revalidated page is a page opened.** First read how the server
+  caches its HTML: one that sends it with an `ETag` or `Last-Modified` and `Cache-Control: no-cache`
+  answers every repeat load of an unchanged page with a `304` and no body. So count a 2xx response whose
+  type is HTML, and a `304` to a request that says it is a top-level document (`Sec-Fetch-Dest: document`,
+  since a 304 carries no type); never a 404, a redirect, a dot-file or an error page. Mount it before every
+  route that answers a page, so the pages a route of their own answers before any static mount are counted
+  too. A page shown in a frame of the same address is one visit, not two. Write it in the shape of the
+  server's other structured log lines (their severity and message fields). The line holds the page path,
+  the region (the `X-Client-Region` request header), `ref` and `utm_*` from the address, the referring
+  host, and whether the user agent is a known bot: no IP address, no full user agent.
+- **The consent change is one change.** The consent code, the link, the privacy policy and the
   project's consent tests change together; a test that pinned the old behaviour is updated to pin the new
   one, never deleted, and an assertion that is still true is never removed or loosened.
 - **The consent tests run the module.** Load the consent module itself with a fake region source (a header,
   no header, no answer in time, an error), a fake GPC flag and fake storage, and check what reaches the tag
   for: a consent-first region, a region that collects by default, an unknown region, a timeout, GPC, a stored
-  choice, and a withdrawal then the next page. A test that only matches the module's source text proves none
-  of it.
+  choice, and a withdrawal then the next page. Also: the top page's Reject reaching a page of the same site
+  framed in it that loaded the module (the denied update and each tool's opt-out there), with no link drawn
+  in the framed page; a region that collects by default sending no `granted` ad type; and a page load with
+  the choice unchanged making no tool call that sends an event. A test that only matches the module's source
+  text proves none of it.
+- **The server's tests run the log line.** Request it as a browser would and check the lines it writes: a
+  page, a `304` to a top-level document GET (counted), a `304` to anything else, a frame, a prefetch, a HEAD,
+  an asset, a 404 and a redirect (none counted).
 - **Make the change the way your tools allow.** On the web, Tartini AI makes it as a draft correction:
   written in the code workspace, the project's tests run to their end, then saved. In Claude Code, edit
   locally; the developer opens the Pull Request and Tartini checks it.

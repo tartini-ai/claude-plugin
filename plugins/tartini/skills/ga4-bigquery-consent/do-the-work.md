@@ -10,12 +10,14 @@ keep notes.
 - **Find out first with one call.** Ask your exploration subagent once (on the web, Tartini AI's explorer
   through task; in Claude Code, its Explore agent), with every code question of find-out-first.md in its
   prompt: where the consent module (or the manager's set-up) is, the file that loads the Google tag and
-  every other reader of the globals the consent change touches (`window.gtag`, `dataLayer`), the footer's
-  legal links and their markup, the privacy policy's cookie section, the tests that name the consent module,
-  the deploy script's step helper, its final checks and the backend its load balancer sends the site to,
-  and the order in which the server mounts its middleware, its page routes and its static files. It searches
-  in its own context and answers with file:line facts and short excerpts. The data questions (where the
-  visitors are, the BigQuery export) are your own tools'.
+  every other reader of the globals the consent change touches (`window.gtag`, `dataLayer`), every place
+  that links the privacy policy (a footer, an account or settings menu, a sign-in page) and its markup, the
+  layout's fixed or sticky controls, the pages a page of the site shows in a frame, the privacy policy's
+  cookie section, the tests that name the consent module, the installed version of each tool the module
+  calls, the deploy script's step helper, its final checks and the backend its load balancer sends the site
+  to, the order in which the server mounts its middleware, its page routes and its static files, and how it
+  caches its HTML (`ETag`, `Cache-Control`). It searches in its own context and answers with file:line facts
+  and short excerpts. The data questions (where the visitors are, the BigQuery export) are your own tools'.
 - **Read only these.** The lines you will change in those files, by the lines its answer names. Never read a
   large file whole, and never the files it already answered. The region needs no server code
   (write-the-change.md).
@@ -25,9 +27,11 @@ keep notes.
 ## The first change: consent
 
 Begin it with begin_draft_correction. Write the whole change before you run anything: the consent module (it
-adds the "Your privacy choices" link to the footer itself, so one file serves every page), the tag loader,
-the privacy policy and the consent tests. Then run the project's whole test script once, fix what your
-change broke, and call finish_event_implementation. Do not run the tests first to see where they stand.
+adds the "Your privacy choices" link beside the privacy policy's links itself, so one file serves every page),
+the tag loader, the privacy policy and the consent tests. Then go through review-checklist.md's items for it
+yourself, have the change reviewed and fix what the review found, run the project's whole test script once,
+fix what your change broke, and call finish_event_implementation. Do not run the tests first to see where
+they stand.
 
 ## The second change: the server's total, in this order
 
@@ -48,9 +52,10 @@ empty `git status` means nothing is written yet, not a conflict.
    answer, or found by search: read those lines, and add the one step that runs the script with `--apply`
    and its flags, through that helper, after the final checks (platform-commands.md). Never read the deploy
    script whole.
-4. **Then the tests, once.** Run the project's whole test script and read only what failed: a test that pins
-   the deploy script or the server says there what it expects. Fix what your change broke, then
-   finish_event_implementation. Do not read the tests before you write, to guess what they will say.
+4. **Then the review and the tests, once each.** Go through review-checklist.md's items for this change, have
+   it reviewed and fix what the review found. Run the project's whole test script and read only what failed:
+   a test that pins the deploy script or the server says there what it expects. Fix what your change broke,
+   then finish_event_implementation. Do not read the tests before you write, to guess what they will say.
 
 You never run the platform script: the person's next deploy does, after its dry run. With no deploy script,
 or on another host, write the log line and give the platform's settings in your reply (platform-commands.md).

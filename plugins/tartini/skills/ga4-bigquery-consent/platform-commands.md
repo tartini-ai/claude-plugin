@@ -34,7 +34,9 @@ value the deploy script already holds (its project) is its own variable, never a
 
 In a deploy script whose steps go through a helper, that line is the helper's command (for example
 `<its step helper> "the consent platform" sh scripts/gcp-consent-platform.sh --apply ...`). The person runs the
-same line without `--apply` first: the dry run prints each change as its command.
+same line without `--apply` first: the dry run prints each change as its command. In your reply, give that dry
+run with every value filled in from what you read (the project's id where the deploy script has its variable),
+so it runs as pasted in their shell.
 
 ## Other hosts, or no deploy script
 
