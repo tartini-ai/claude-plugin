@@ -32,10 +32,20 @@ keep notes.
 
 Begin it with begin_draft_correction. Write the whole change before you run anything: the consent module (it
 adds the "Your privacy choices" link beside the privacy policy's links itself, so one file serves every page),
-the tag loader, the privacy policy and every public page it makes untrue, and the consent tests. Then go
+the tag loader, the privacy policy and every public page it makes untrue, and the consent tests.
+
+These files and this skill's rules together seldom fit one context. When they will not, keep the plan
+yourself and split the change into parts that share no file, each written by a worker (on the web, Tartini
+AI's worker through task; in Claude Code, a subagent of its own): for example the consent module and its
+tests; the tag loader and the other readers of the globals it touches; the privacy policy, the other public
+pages and the tests that pin their sentences. Give each worker the person's request word for word, its files,
+the rules of write-the-change.md and the review-checklist.md items its files must meet by number, the
+explorer's facts for those files, and its focused tests; start them all in one message. Their reports say
+what each changed; read the change itself with `git diff`, never the files again. Then go
 through review-checklist.md's items for it yourself, and have the change reviewed: one reviewer per group of
 review-checklist.md, each given its group, plus one that traces the request's outcome from the scripts a page
-loads to the tag started, region by region, all started in one message. Fix what they found, run the
+loads to the tag started, region by region, all started in one message. Fix what they found (a part's
+findings go back to that part's worker, continued with its task_id), run the
 project's whole test script once, fix what your change broke, and call finish_event_implementation with
 reviewAnswers answering every FAIL line and finding. Do not run the tests first to see where they stand.
 
@@ -72,7 +82,9 @@ or on another host, write the log line and give the platform's settings in your 
 
 You have lost neither the person's request nor your work: read your notes first; read_conversation shows
 their words (the turn you are answering is marked current); Tartini AI's notice says what is already saved in
-the draft and which files you have written for the change that is open. In the workspace the saved draft is
+the draft, what the workspace holds since it (each file and its lines, as git shows them, your workers'
+included) and where the explorer's last answer and each worker's report are kept (`.tartini/`): read those
+rather than asking again or reading the files. In the workspace the saved draft is
 committed, so `git status` and `git diff` show only the change you are writing now: a saved change is done.
 Carry on with the next file to write. Never end the turn with a plan, or with a question their request
 already answered.
