@@ -520,8 +520,7 @@ never narrowed to the pages that happen to run it today. Never load analytics be
 that asks for it, and never write a tag where the site's own tests forbid one outside its consent gate.
 Changing HOW a site asks (which regions are asked first, collecting by default with an opt-out, Consent Mode,
 a traffic total that does not depend on consent) is the `ga4-bigquery-consent` skill's: load it. A request to change
-it is the person's yes, and the change is made in that turn; a question that asks for a recommendation waits for
-their answer.
+it gets the skill's proposal first and changes nothing; the change is made once the person agrees to the proposal.
 The install brief names the files and consent-manager scripts to read first
 (`ga4-baseline.consentCandidates`); which mechanism it is, and how a tag is registered with it, is
 read from the code.

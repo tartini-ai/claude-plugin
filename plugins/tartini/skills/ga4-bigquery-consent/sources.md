@@ -80,3 +80,16 @@ Checked on 2026-10-26, for a tool loaded later and the export's dates:
 - Google Analytics: support.google.com/analytics/answer/9823238 ("Once the linkage is complete, data should start
   flowing to your BigQuery project within 24 hours") and answer/9358801 (it "exports all the raw, unsampled event
   data once per day from the previous day"); neither page describes exporting days from before the link.
+
+Checked on 2026-10-27, for the rough cost a proposal names:
+
+- Google Cloud Observability pricing (cloud.google.com/stackdriver/pricing): Cloud Logging does not charge to
+  route log entries to a supported destination, the destination's own charges apply; log storage is $0.50 a GiB
+  with the first 50 GiB a project a month free.
+- BigQuery pricing (cloud.google.com/bigquery/pricing): streaming inserts $0.01 per 200 MB; active storage with
+  the first 10 GiB a month free.
+
+The two turns, a proposal first and the work after the person's yes, follow the approval gate coding agents put
+before a plan is carried out: Claude Code's plan mode (code.claude.com/docs/en/common-workflows), Aider's
+architect and editor modes (aider.chat/docs/usage/modes.html), GitHub's Spec Kit (github.com/github/spec-kit)
+and Kiro's specs (kiro.dev/docs/specs).

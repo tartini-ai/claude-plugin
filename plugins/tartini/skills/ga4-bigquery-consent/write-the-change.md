@@ -168,8 +168,18 @@ Part of the ga4-bigquery-consent skill.
 - **The consent change is one change.** The consent code, the link, the privacy policy and the
   project's consent tests change together; a test that pinned the old behaviour is updated to pin the new
   one, never deleted, and an assertion that is still true is never removed or loosened.
-- **The consent tests run the module.** Load the consent module itself with a fake region source (a header,
-  no header, no answer in time, an error), a fake GPC flag and fake storage, and check what reaches the tag
+- **The acceptance tests come first, and run the real page.** Before the consent code, write the tests of the
+  proposal's data scenarios, and the change is done when they pass: run, don't read. Each loads, in one fake
+  page and in the page's real order, the site's REAL consent module, its tag loader and every vendor script
+  they start, never the consent module alone, with fakes only at the edges: the region source (a header, no
+  header, no answer in time, an error), the GPC flag, storage, and each tool's network. Each asserts what the
+  Google tag receives (its commands, a `page_view` with `analytics_storage` granted) and what each vendor
+  captures: a default region (both start on the first page, no banner), the opt-out link and GPC (nothing
+  sent), a consent-first and an unknown region (nothing before a choice, Accept starts both, Reject keeps them
+  off), and a framed page (it follows the top page's choice). Load them as the pages do and when: each loader
+  that registers with the site's gate right after the consent module, and the region's answer at once and late
+  (150 ms or more), since a decision that waits for the region must hold every gate closed meanwhile. Beside
+  them, check what reaches the tag
   for: a consent-first region, a region that collects by default, an unknown region, a timeout, GPC, a stored
   choice, and a withdrawal then the next page. Also: the top page's Reject reaching a page of the same site
   framed in it that loaded the module (the denied update and each tool's opt-out there), with no link drawn

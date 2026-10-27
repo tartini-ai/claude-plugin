@@ -2,8 +2,10 @@
 
 Part of the ga4-bigquery-consent skill.
 
-Read these from the code and the data. Ask the person only what neither can answer. The code's answers come
-from one call to your exploration subagent (do-the-work.md), not from reading the files yourself.
+Read these from the code and the data, in the turn of the request, before the proposal: both changes are
+built from what you find here, and the yes turn does not look again. Ask the person only what neither can
+answer. The code's answers come from one call to your exploration subagent (do-the-work.md), not from
+reading the files yourself.
 
 - **The consent mechanism.** None at all; a module of the site's own (a file whose name says consent,
   cookie or privacy, a banner in the markup); a consent manager (OneTrust, Cookiebot, Usercentrics,
@@ -45,7 +47,8 @@ from one call to your exploration subagent (do-the-work.md), not from reading th
 - **Where the site runs.** The host and CDN decide where a visitor's country can come from (write-the-change.md).
   On Google Cloud, by search: the deploy script, and the backend service its load balancer sends the site to.
 - **How the server answers a page.** The order in which it mounts its middleware, its page routes and its
-  static files, and how it caches its HTML (`ETag`, `Last-Modified`, `Cache-Control: no-cache`): a server
-  that revalidates answers a repeat load of an unchanged page with a `304` (write-the-change.md).
+  static files, the structured log line it already writes (where, and its fields), and how it caches its
+  HTML (`ETag`, `Last-Modified`, `Cache-Control: no-cache`): a server that revalidates answers a repeat load
+  of an unchanged page with a `304` (write-the-change.md).
 - **BigQuery.** Whether GA4 exports to it (the `analytics_<property id>` dataset and its location), and
   whether server or CDN logs already land anywhere.

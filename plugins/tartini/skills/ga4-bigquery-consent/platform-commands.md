@@ -38,6 +38,14 @@ same line without `--apply` first: the dry run prints each change as its command
 run with every value filled in from what you read (the project's id where the deploy script has its variable),
 so it runs as pasted in their shell.
 
+**What it creates, and roughly what it costs**, for the proposal: the region header on the backend service
+(free); a raw log dataset whose partitions expire after 30 days; a sink of the log line's entries into it,
+which Cloud Logging routes at no charge; and two grants on that dataset alone. The cost is the line itself: it
+is ingested with the server's other logs (Cloud Logging's first 50 GiB a project a month are free, then
+$0.50 a GiB), and BigQuery bills the rows the sink streams in ($0.01 per 200 MB) and their storage (the first
+10 GiB a month free). A site of thousands of page views a day pays cents a month, or nothing; give the
+estimate from its own page views, and name Google's pricing pages for the exact figures.
+
 ## Other hosts, or no deploy script
 
 There is no script: give the person the settings in your reply, as steps or commands with their own names.
