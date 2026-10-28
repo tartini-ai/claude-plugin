@@ -59,8 +59,8 @@ comes from. With data connected, define real metrics instead and list the tiles 
 - A funnel's `compareWith` is another funnel of this project with the same steps (the paid funnel beside
   the whole one); its numbers are read from what is stored, never queried again.
 - How the person SEES the Metrics page (its days, such as "Last 90 days", list or cards, order, sizes,
-  colours, columns, hidden metrics) is set_metrics_view: theirs alone, and never a metric. Never say it
-  cannot be changed.
+  columns, hidden metrics) is set_metrics_view: theirs alone, and never a metric. Never say it cannot be
+  changed.
 
 ## References
 

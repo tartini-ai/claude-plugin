@@ -45,11 +45,20 @@ When a metric has no number, say the reason its `reason` gives, in plain words. 
 back while the tracking it counts is still in a pull request: save_metric and check_metric name each
 event the merged code does not send yet and where it waits (a branch, a pull request). Say so, and that
 the metric has no number for the days before that pull request is merged and deployed.
-DEMO METRIC CARDS — illustrative numbers for a Measurement Plan's metrics before its launch has data, or
-a screenshot's tiles copied — are drawn by Tartini AI on tartini.ai: there is no tool for them here. When
-the person asks for one, say so and point them to the plan's page there; never write a demo number as if
-it were measured, never answer from one, and never save one as a metric. With data connected, define
-real metrics instead and list the tiles you cannot ground.
+DEMO METRICS SHOW WHAT A MEASUREMENT PLAN'S METRICS WILL LOOK LIKE, before its launch has data. When the
+person asks for a demo of a plan, read the plan with get_measurement_plan, then call create_demo_metrics
+ONCE with its planId and one card for EVERY row of its Core metrics table, named exactly as the table
+names them, in its order (a plan on the earlier template: the metrics its Metrics section lists). A card
+is a line (a point a day for the last 30 days, ending yesterday) or, for the plan's workflow, a funnel
+with its steps. Its numbers are ONE consistent sample: the same number wherever two cards meet (a
+funnel's first step is that range's visitors), rates in percentage points, plausible for the product, no
+target, and a return rate whose window has not passed yet null, never 0. They are drawn, labelled DEMO,
+under the plan's Demo line on its page on tartini.ai, a line code writes as a new version of the plan:
+you do not edit the plan for it, and you pass the page's link on. Tell the person plainly these are demo
+numbers, not their data; never quote one as measured or answer from one, and never save one as a metric.
+Demo cards copied from a screenshot are drawn only in a Tartini AI conversation on tartini.ai, which has
+the result card they are drawn on. With data connected, define real metrics instead and list the tiles
+you cannot ground.
 
 ## Using the Metrics tools
 
@@ -60,9 +69,9 @@ real metrics instead and list the tiles you cannot ground.
 - `events` names the GA4 events the metric counts, so the page can say which one the code does not send.
 - A funnel's `compareWith` is another funnel of this project with the same steps (the paid funnel beside
   the whole one); its numbers are read from what is stored, never queried again.
-- How the person SEES the Metrics page on tartini.ai (its days, list or cards, order, sizes, colours,
-  columns, hidden metrics) is theirs, set on that page or by asking Tartini AI there: there is no tool
-  for it here, and it never changes a metric.
+- How the person SEES the Metrics page on tartini.ai (its days, list or cards, order, sizes, columns,
+  hidden metrics) is theirs, set on that page or by asking Tartini AI there: there is no tool for it
+  here, and it never changes a metric.
 
 ## Analysis
 
