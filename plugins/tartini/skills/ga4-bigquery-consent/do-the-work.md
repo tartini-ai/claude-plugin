@@ -34,14 +34,15 @@ writes reads little, writes each piece as soon as it knows it, and keeps notes.
 ## The yes turn: build what was agreed, one change per turn
 
 - **One change per turn.** The turn of their yes makes the first change (consent), saves it, and ends with one
-  line saying what was saved and what comes next, the second change still pending on your todo list. Tartini AI
-  then continues the plan in a new job of this conversation (its message starts SERVER CONTINUATION), which makes
-  and saves the second change and ends with the reply (tell-the-person.md). In that job the first change is
-  already saved: begin the second.
+  line saying what was saved and what comes next. On the web, begin it with begin_draft_correction naming the
+  second change in remainingChanges: that, not your todo list, is what makes Tartini AI continue the plan in a new
+  job of this conversation (its message starts SERVER CONTINUATION), which begins the second with
+  remainingChanges: [], saves it and ends with the reply (tell-the-person.md). In that job the first change is
+  already saved: begin the second. In Claude Code, carry on with the second yourself once the first is saved.
 - **The proposal is the spec.** The architecture they agreed and its implementation notes are your reply just
   before their yes, in the conversation so far (and through read_conversation where you have it); their yes may
-  change some of it. Do not decide again or investigate again. Your todo list starts at writing: the change's
-  acceptance tests, its files, its review, the tests and its save.
+  change some of it. Do not decide again or investigate again. Your todo list is this turn's own work, and starts at
+  writing: the change's acceptance tests, its files, its review, the tests and its save.
 - **Read only these.** The lines you will change, by the lines the implementation notes name. Never read a
   large file whole. A place the notes do not name is found by search, not by reading around it; a proposal with
   no notes (it answered a question) gets the one explorer call above first. The region needs no server code
@@ -53,10 +54,10 @@ writes reads little, writes each piece as soon as it knows it, and keeps notes.
 
 ## The first change: consent
 
-Begin it with begin_draft_correction. **Its acceptance tests first** (write-the-change.md): one test per data
-scenario of the proposal, each loading the site's real consent, tag and vendor scripts together in one page, in
-the order and at the moments the pages load them, with the region answering late too, and asserting what the
-Google tag and each tool receive; run them, and they fail.
+Begin it with begin_draft_correction (on the web with the second change in remainingChanges). **Its acceptance
+tests first** (write-the-change.md): one test per data scenario of the proposal, each loading the site's real
+consent, tag and vendor scripts together in one page, in the order and at the moments the pages load them, with
+the region answering late too, and asserting what the Google tag and each tool receive; run them, and they fail.
 Write the whole change before you run anything else: the consent module (it adds the "Your privacy choices" link
 beside the privacy policy's links itself, so one file serves every page), the tag loader, the privacy policy and
 every public page it makes untrue, and the consent tests. The change is done when the acceptance tests pass.
@@ -79,7 +80,8 @@ reply. Do not run the whole test script first to see where it stands.
 
 ## The second change: the server's total, in this order
 
-Begin it once, with begin_draft_correction, in the job that continues after the first is saved. Its acceptance
+Begin it once, with begin_draft_correction and remainingChanges: [] (it is the plan's last), in the job that
+continues after the first is saved (in Claude Code, once you saved the first). Its acceptance
 test first: the server's test requests pages as a browser would and finds one line per top-level page view, and
 none for a frame, an asset, a 404 or a redirect (write-the-change.md). The change stays open until
 finish_event_implementation answers, through any summary of your context: do not begin it a second time. An
