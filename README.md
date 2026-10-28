@@ -15,8 +15,8 @@ claude plugin install tartini@tartini-ai
 | `plugins/tartini/.claude-plugin/plugin.json` | The plugin's manifest |
 | `plugins/tartini/.mcp.json` | The two remote MCP servers: `tartini` and `bigquery` |
 | `plugins/tartini/scripts/gcloud-token` | The `bigquery` server's headersHelper: the Authorization header from `gcloud auth print-access-token` |
-| `plugins/tartini/skills/` | Five skills (`setup`, `tracking`, `metrics`, `measurement-plan`, `ga4-bigquery-consent`): the same files Tartini AI's server gives Claude Code with `read_skill`, copied from the server's repository. Do not edit them here |
-| `plugins/tartini/commands/` | `/tartini:plan`, `/tartini:track`, `/tartini:status`, `/tartini:doctor` |
+| `plugins/tartini/skills/` | Six skills (`setup`, `tracking`, `metrics`, `tables`, `measurement-plan`, `ga4-bigquery-consent`): the same files Tartini AI's server gives Claude Code with `read_skill`, copied from the server's repository. Do not edit them here |
+| `plugins/tartini/commands/` | Six commands: `/tartini:plan`, `/tartini:track`, `/tartini:metric`, `/tartini:table`, `/tartini:status`, `/tartini:doctor` |
 | [`knowledge/`](knowledge/) | Every domain guide (as Tartini AI and as Claude Code read it) and every reference document Tartini AI works from, for reading. Generated from Tartini AI's server; not installed with the plugin, because Claude Code reads guides live from the server |
 | `plugins/tartini/evals/` | Cases for `claude plugin eval`, with mocks of the three MCP servers |
 | `server.json` | The Tartini AI MCP server's entry for the MCP Registry. Not published |

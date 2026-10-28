@@ -100,6 +100,7 @@ Skills, which Claude uses on its own when your request matches, even when you ne
 | [`setup`](skills/setup/SKILL.md) | Starting analytics work in a repository, checking what is connected, a key or permission problem |
 | [`tracking`](skills/tracking/SKILL.md) | Adding, changing or listing GA4 events, Tartini Autocapture, the Google tag |
 | [`metrics`](skills/metrics/SKILL.md) | Questions about your numbers, and defining, checking or saving a metric |
+| [`tables`](skills/tables/SKILL.md) | Building or changing a BigQuery table or view, a daily refresh with a scheduled query, a backfill |
 | [`measurement-plan`](skills/measurement-plan/SKILL.md) | What to measure for a launch, a page, a checkout, a campaign or an experiment |
 | [`ga4-bigquery-consent`](skills/ga4-bigquery-consent/SKILL.md) | Cookie banners, consent managers and Google Consent Mode, and a traffic total that does not depend on consent (its details are the files beside its SKILL.md) |
 
@@ -109,6 +110,8 @@ Commands you type:
 | --- | --- |
 | `/tartini:plan [what to measure]` | Writes or revises a Measurement Plan |
 | `/tartini:track [what to track]` | Adds or changes tracking |
+| `/tartini:metric [a question, or the metric to define]` | Answers a question about your numbers, or defines a metric |
+| `/tartini:table [the table to build or change]` | Builds or changes a BigQuery table or view. Shows you every statement before it runs |
 | `/tartini:status` | Shows the project, its connections, the tracking on this branch, metrics and plans. Reads only |
 | `/tartini:doctor [GA4 property id]` | Health-checks the Google tag, Autocapture, what GA4 received in the last 7 days, custom dimensions and the BigQuery export. Checks first and changes nothing, then asks which fixes to make |
 
@@ -139,7 +142,7 @@ The plugin connects to exactly two remote services.
 ### On your machine
 
 - `scripts/gcloud-token` runs only when Claude Code connects to the `bigquery` server. It runs `gcloud auth print-access-token` and prints the header to Claude Code. It writes nothing, caches nothing and sends nothing itself.
-- The skills and commands are instructions for Claude. They ask Claude to run git commands (`git remote get-url origin`, `git branch --show-current`, and for tracking changes `git merge-base` and `git diff`) and, for tracking work, to edit files, run your project's tests and open a pull request with git and `gh`. Claude Code asks your permission as usual.
+- The skills and commands are instructions for Claude. They ask Claude to run git commands (`git remote get-url origin`, `git branch --show-current`, and for tracking changes `git merge-base` and `git diff`) and, for tracking work, to edit files, run your project's tests and open a pull request with git and `gh`, labelled `tartini-ai`. A table or view Claude builds with Tartini AI's help carries the BigQuery label `assisted_by: tartini_ai`. Nothing is added to your code or your analytics data. Claude Code asks your permission as usual.
 - The plugin stores nothing: no configuration file, no cache and no telemetry. Your sign-in is kept by Claude Code; a key, if you use one, stays in your environment variable.
 - The `evals/` folder holds test cases for `claude plugin eval`. A normal session never loads them.
 

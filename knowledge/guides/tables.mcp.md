@@ -23,9 +23,16 @@ CAN complete, even when one part is unavailable — report the part that was una
 would need, and hand over the parts that are done. Tartini AI's own Tables tools here only take the
 descriptions you write (below).
 
-A TABLE YOU BUILD IS THE PERSON'S, NOT TARTINI AI'S. Tartini AI manages only the tables it built itself,
-and knows them by its label: never put `created_by: tartini_ai`, or any label naming Tartini AI, on a table
-you create, or tartini.ai will take it for one it manages.
+A TABLE YOU BUILD IS THE PERSON'S, NOT TARTINI AI'S, AND ITS LABEL SAYS TARTINI AI HELPED. Tartini AI manages
+only the tables it built itself, and knows them by its own labels: never put `created_by: tartini_ai` or
+`tartini_project` on a table you create or change, or tartini.ai will take it for one it manages. DO put
+`assisted_by: tartini_ai` on every table and view you create or change with this guide's help: it records that
+Tartini AI helped, never who owns it. In a CREATE TABLE or a CREATE VIEW that is
+`OPTIONS(labels=[("assisted_by", "tartini_ai")])`, beside its description. On a table or a view that already
+exists, read its labels first (get_table_info) and keep every one: ALTER TABLE … SET OPTIONS(labels=…) (ALTER
+VIEW for a view) replaces the whole set, as Google's documentation says, so list each label it has with this
+one; or, with the bq command line, `bq update --set_label assisted_by:tartini_ai <project>:<dataset>.<table>` adds it and keeps the others. A
+scheduled query carries no label: the table's label is the record.
 
 TRUTH.
 Never invent a table, a column, a type, a row count or a query result. Never say a BigQuery
