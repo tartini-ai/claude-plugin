@@ -27,7 +27,7 @@ reading the files yourself.
   assistant launcher) and its dialogs' z-index, which a fallback link must stay clear of and under.
 - **Which pages frame which.** A page shown in a frame of another page of the same site (an app shell that
   changes page in place), whether both load the consent module, and where the choice is stored
-  (`localStorage` or a cookie): that decides how the top page's choice reaches the framed page.
+  (`localStorage` or a cookie): that decides how the top page's decision and choices reach the framed page.
 - **What the site promises.** The privacy policy's cookie section, every other public page that describes
   the old behaviour (the policy's other paragraphs, a subprocessor or vendor list, the terms, a cookie table),
   and the project's own tests that pin the consent behaviour and those sentences: a change to consent changes

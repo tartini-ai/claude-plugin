@@ -8,7 +8,8 @@ file and the rule's bold title. Check each item in every place it names (every d
 module: a top page, and a page framed in it), reading each place in context, never in one sample. An item
 the change does not touch (the server's change draws no banner) is N/A, with why. A save waits for one
 reviewer that traces the request's outcome (each data scenario of the proposal, from the scripts a page loads,
-in order, to what the Google tag and each tool send, region by region, and to the server's line) and one per
+in order, to what the Google tag and each tool send, region by region, in the top page and in a page framed in
+it, and to the server's line) and one per
 group not marked advisory (the red lines), all started in one message; a reviewer gives ledger lines only to the
 items its lens names. A group marked advisory is reviewed when there is time, one reviewer each: what it finds is
 fixed or listed in your reply, and holds no save.
@@ -45,7 +46,7 @@ fixed or listed in your reply, and holds no save.
 ## A page framed by the same site (advisory)
 
 21. A page shown in a frame of another page of the same site draws no link and no banner of its own. Look: the module's frame check, in a page that is framed. (write-the-change.md: A page framed by the same site)
-22. The top page's Reject and Accept reach a framed page that loaded the module: on a Reject it sends the denied update and each tool's opt-out, on an Accept the update and each opt-in (a `storage` listener on the consent key, a message, or a reload of the frame). Look: in every document that loads the module, the top page and a page framed in it. (write-the-change.md: A page framed by the same site)
+22. A framed page that loaded the module reaches the top page's decision: in a default region, with nothing stored, it starts on its own load; the top page's Reject and Accept reach it (the denied update and each tool's opt-out; the update and each opt-in). Look: in every document that loads the module, the top page and a page framed in it. (write-the-change.md: A page framed by the same site)
 
 ## Withdrawing (advisory)
 
@@ -82,7 +83,7 @@ fixed or listed in your reply, and holds no save.
 
 42. The acceptance tests load the site's real consent module, tag loader and vendor scripts in one fake page, in order, faking only the edges (region source, GPC, storage, each tool's network), and assert what the tag and each vendor receive; the module alone, or matching source text, proves nothing. Look: the tests' harness. (write-the-change.md: The acceptance tests come first, and run the real page)
 43. They cover a consent-first region, a region that collects by default, an unknown region, a timeout, GPC, a stored choice, and a withdrawal then the next page. Look: a test for each case. (write-the-change.md: The acceptance tests come first, and run the real page)
-44. They cover the top page's Reject reaching a page of the same site framed in it that loaded the module (the denied update and each tool's opt-out there), with no link drawn in the framed page. Look: the frame's test. (write-the-change.md: The acceptance tests come first, and run the real page)
+44. They cover a page of the same site framed in the top page in each data scenario, the default region's first page among them (it starts on its own load), and the top page's Reject reaching it (the denied update and each tool's opt-out there), with no link drawn in the framed page. Look: the frame's tests, scenario by scenario. (write-the-change.md: The acceptance tests come first, and run the real page)
 45. They cover a region that collects by default sending no `granted` ad type. Look: the default region's test, at every consent update. (write-the-change.md: The acceptance tests come first, and run the real page)
 46. They cover a page load with the choice unchanged making no tool call that sends an event. Look: the test of a second page load. (write-the-change.md: The acceptance tests come first, and run the real page)
 47. They cover, in a region that collects by default with nothing stored, a loader registered through the site's own gate running, on the first page and the next, not only the consent update sent. Look: the default region's test, for a loader registered through the gate and a second page load. (write-the-change.md: The acceptance tests come first, and run the real page; The gate the site already has)

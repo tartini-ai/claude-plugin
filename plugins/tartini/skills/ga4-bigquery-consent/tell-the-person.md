@@ -38,8 +38,10 @@ next turn builds:
    backend its load balancer sends the site to. And the acceptance tests each change is done when it passes,
    one line each: a default region (the Google tag and each tool start on the first page, a `page_view` with
    `analytics_storage` granted, no banner), the opt-out link and GPC (nothing sent), a consent-first and an
-   unknown region (nothing before a choice, Accept starts both, Reject keeps them off), a framed page (it
-   follows the top page's choice), each in the pages' real load order with the region answering late too, and
+   unknown region (nothing before a choice, Accept starts both, Reject keeps them off), a framed page (the
+   same decision as the top page: it starts on its own load where the top page collects by default, and
+   follows Accept and Reject where the top page asks first), each in the pages' real load order with the
+   region answering late too, and
    the server (one line per top-level page view, none for a frame, an asset, a 404 or a redirect).
 
 ## Their yes is the next turn

@@ -75,8 +75,13 @@ Part of the ga4-bigquery-consent skill.
   layout's CSS and its media queries for them: a rail, a switcher, an assistant launcher), and under its dialogs
   (read their z-index).
 - **A page framed by the same site.** A page shown in a frame of another page of the same site draws no
-  link or banner of its own: the top page does, and the framed page applies what the top page's choice
-  changes, so the visitor sees one control and gets one effect. A change to `localStorage` fires a
+  link or banner of its own: the top page does, and the framed page reaches the same decision as the top
+  page and applies what the top page's choice changes, so the visitor sees one control and gets one effect.
+  A decision is not always a choice: where the top page decides with nothing stored (a region that collects
+  by default), no `storage` event ever comes, so the framed page reaches that decision on its own load, by
+  the same rule (its region, GPC, the stored record) or by asking its top page of the same origin, and starts
+  the tag and each tool as the top page does; where the top page asks first, the framed page sends nothing
+  and waits for the top page's Accept or Reject. A change to `localStorage` fires a
   `storage` event in every other document of the same origin, never in the one that wrote it: the framed
   page listens for the consent key and, on a Reject, sends the denied update and each tool's opt-out (on an
   Accept, the update and each opt-in). A choice kept in a cookie fires no event: the top page sends the frame
@@ -176,7 +181,10 @@ Part of the ga4-bigquery-consent skill.
   Google tag receives (its commands, a `page_view` with `analytics_storage` granted) and what each vendor
   captures: a default region (both start on the first page, no banner), the opt-out link and GPC (nothing
   sent), a consent-first and an unknown region (nothing before a choice, Accept starts both, Reject keeps them
-  off), and a framed page (it follows the top page's choice). Load them as the pages do and when: each loader
+  off), and each of those again in a page of the same site framed in the top page, which reaches the top
+  page's decision (in a region that collects by default it starts the tag and each tool on its own load, as
+  the top page does; with GPC it sends nothing; where consent comes first it sends nothing before a choice,
+  starts on the top page's Accept and stays off on its Reject). Load them as the pages do and when: each loader
   that registers with the site's gate right after the consent module, and the region's answer at once and late
   (150 ms or more), since a decision that waits for the region must hold every gate closed meanwhile. Beside
   them, check what reaches the tag

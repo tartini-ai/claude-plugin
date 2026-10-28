@@ -71,7 +71,8 @@ the rules of write-the-change.md and the review-checklist.md items its files mus
 implementation notes for those files, and its focused tests; start them all in one message. Their reports say
 what each changed; read the change itself with `git diff`, never the files again. Then have the change
 reviewed: one reviewer that traces the request's outcome, each data scenario from the scripts a page loads to
-what the tag and each tool send, region by region, and one per group of review-checklist.md not marked advisory
+what the tag and each tool send, region by region, in the top page and in a page framed in it, and one per group
+of review-checklist.md not marked advisory
 (the red lines), all started in one message; a reviewer of an advisory group only when there is time. Fix what
 they found (a part's findings go back to that part's worker, continued with its task_id), run the project's
 whole test script once, fix what your change broke, and call finish_event_implementation with reviewAnswers
